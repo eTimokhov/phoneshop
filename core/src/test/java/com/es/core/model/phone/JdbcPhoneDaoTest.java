@@ -45,8 +45,8 @@ public class JdbcPhoneDaoTest {
 
     @Test
     public void testFindAllCountMatch() {
-        List<Phone> phones = jdbcPhoneDao.findAll(0,10);
-        assertEquals(10,phones.size());
+        List<Phone> phones = jdbcPhoneDao.findAll(0, 10);
+        assertEquals(10, phones.size());
     }
 
 
