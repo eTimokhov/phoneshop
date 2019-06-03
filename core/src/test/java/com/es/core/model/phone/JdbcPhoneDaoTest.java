@@ -6,6 +6,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,5 +50,53 @@ public class JdbcPhoneDaoTest {
         assertEquals(10, phones.size());
     }
 
+    @Test
+    public void testSavePhone() {
+        Phone phone = new Phone();
+        phone.setBrand("someBrand1");
+        phone.setModel("someModel1");
+        phone.setBatteryCapacityMah(3000);
+        phone.setDisplaySizeInches(BigDecimal.valueOf(6.1));
+        jdbcPhoneDao.save(phone);
+        Long phoneId = phone.getId();
+        Optional<Phone> optionalExtractedPhone = jdbcPhoneDao.get(phoneId);
+        assertTrue(optionalExtractedPhone.isPresent());
+        Phone extractedPhone = optionalExtractedPhone.get();
+        assertEquals("someBrand1", extractedPhone.getBrand());
+        assertEquals("someModel1", extractedPhone.getModel());
+        assertEquals(Integer.valueOf(3000), extractedPhone.getBatteryCapacityMah());
+        assertEquals(BigDecimal.valueOf(6.1), extractedPhone.getDisplaySizeInches());
+    }
+
+    @Test
+    public void testSavePhoneColors() {
+        Phone phone = new Phone();
+        phone.setBrand("someBrand2");
+        phone.setModel("someModel2");
+
+        Color color1 = new Color();
+        color1.setCode("Blue");
+        color1.setId(1003L);
+
+        Color color2 = new Color();
+        color2.setCode("Pink");
+        color2.setId(1008L);
+
+        Set<Color> colors = new HashSet<>();
+        colors.add(color1);
+        colors.add(color2);
+
+        phone.setColors(colors);
+
+        jdbcPhoneDao.save(phone);
+        Long phoneId = phone.getId();
+        Phone extractedPhone = jdbcPhoneDao.get(phoneId).get();
+        assertEquals(colors, extractedPhone.getColors());
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testSaveNull() {
+        jdbcPhoneDao.save(null);
+    }
 
 }
