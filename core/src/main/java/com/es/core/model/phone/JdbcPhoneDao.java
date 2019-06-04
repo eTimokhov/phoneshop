@@ -16,7 +16,13 @@ import java.util.*;
 public class JdbcPhoneDao implements PhoneDao {
     @Resource
     private JdbcTemplate jdbcTemplate;
+    @Resource
+    private BeanPropertyRowMapper<Phone> phoneBeanPropertyRowMapper;
+    @Resource
+    private BeanPropertyRowMapper<Color> colorBeanPropertyRowMapper;
+
     private SimpleJdbcInsert insertPhone;
+
 
     @PostConstruct
     public void init() {
@@ -26,10 +32,9 @@ public class JdbcPhoneDao implements PhoneDao {
     }
 
     private static final String FIND_COLORS_BY_PHONE_ID =
-            "SELECT * FROM phone2color " +
-                    "JOIN phones ON phones.id = phone2color.phoneId " +
-                    "JOIN colors ON colors.id = phone2color.colorId " +
-                    "WHERE phones.id = ?";
+            "SELECT * FROM colors " +
+                    "JOIN phone2color ON colors.id = phone2color.colorId " +
+                    "WHERE phoneId = ?";
 
     private static final String FIND_ALL_PHONES =
             "SELECT * FROM phones OFFSET ? LIMIT ?";
@@ -41,9 +46,21 @@ public class JdbcPhoneDao implements PhoneDao {
             "INSERT INTO phone2color (phoneId, colorId)" +
                     "VALUES (?, ?)";
 
+    private final static String UPDATE_PHONE =
+            "UPDATE phones SET " +
+                    "brand = ?, model = ?, price = ?, displaySizeInches = ?, weightGr = ?, lengthMm = ?, " +
+                    "widthMm = ?, heightMm = ?, announced = ?, deviceType = ?, os = ?, displayResolution = ?, " +
+                    "pixelDensity = ?, displayTechnology = ?, backCameraMegapixels = ?, frontCameraMegapixels = ?, " +
+                    "ramGb = ?, internalStorageGb = ?, batteryCapacityMah = ?, talkTimeHours = ?, " +
+                    "standByTimeHours = ?, bluetooth = ?, positioning = ?, imageUrl = ?, description = ? " +
+                    "WHERE id = ?";
+
+    private static final String DELETE_COLORS_WITH_PHONE_ID =
+            "DELETE FROM phone2color WHERE phoneId = ?";
+
     public Optional<Phone> get(final Long key) {
         try {
-            Phone phone = jdbcTemplate.queryForObject(FIND_PHONE_BY_ID, new BeanPropertyRowMapper<>(Phone.class), key);
+            Phone phone = jdbcTemplate.queryForObject(FIND_PHONE_BY_ID, phoneBeanPropertyRowMapper, key);
             phone.setColors(findColors(phone.getId()));
             return Optional.of(phone);
         } catch (DataAccessException e) {
@@ -52,8 +69,10 @@ public class JdbcPhoneDao implements PhoneDao {
     }
 
     public void save(final Phone phone) {
-        if (phone == null) {
-            throw new IllegalArgumentException("Phone must not be null");
+        Objects.requireNonNull(phone);
+        if (phone.getId() != null) {
+            update(phone);
+            return;
         }
         SqlParameterSource parameters = new BeanPropertySqlParameterSource(phone);
         Long phoneId = insertPhone.executeAndReturnKey(parameters).longValue();
@@ -61,14 +80,28 @@ public class JdbcPhoneDao implements PhoneDao {
         saveColors(phone);
     }
 
+    private void update(Phone phone) {
+        jdbcTemplate.update(UPDATE_PHONE, phone.getBrand(), phone.getModel(), phone.getPrice(),
+                phone.getDisplaySizeInches(), phone.getWeightGr(), phone.getLengthMm(),
+                phone.getWidthMm(), phone.getHeightMm(), phone.getAnnounced(),
+                phone.getDeviceType(), phone.getOs(), phone.getDisplayResolution(),
+                phone.getPixelDensity(), phone.getDisplayTechnology(), phone.getBackCameraMegapixels(),
+                phone.getFrontCameraMegapixels(), phone.getRamGb(), phone.getInternalStorageGb(),
+                phone.getBatteryCapacityMah(), phone.getTalkTimeHours(), phone.getStandByTimeHours(),
+                phone.getBluetooth(), phone.getPositioning(), phone.getImageUrl(),
+                phone.getDescription(), phone.getId());
+        jdbcTemplate.update(DELETE_COLORS_WITH_PHONE_ID, phone.getId());
+        saveColors(phone);
+    }
+
     public List<Phone> findAll(int offset, int limit) {
-        List<Phone> phones = jdbcTemplate.query(FIND_ALL_PHONES, new BeanPropertyRowMapper(Phone.class), offset, limit);
+        List<Phone> phones = jdbcTemplate.query(FIND_ALL_PHONES, phoneBeanPropertyRowMapper, offset, limit);
         phones.forEach(p -> p.setColors(findColors(p.getId())));
         return phones;
     }
 
     private Set<Color> findColors(final Long phoneId) {
-        return new HashSet<>((jdbcTemplate.query(FIND_COLORS_BY_PHONE_ID, new BeanPropertyRowMapper<>(Color.class), phoneId)));
+        return new HashSet<>((jdbcTemplate.query(FIND_COLORS_BY_PHONE_ID, colorBeanPropertyRowMapper, phoneId)));
     }
 
     private void saveColors(Phone phone) {

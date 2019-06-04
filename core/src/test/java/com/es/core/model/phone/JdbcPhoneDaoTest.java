@@ -74,6 +74,36 @@ public class JdbcPhoneDaoTest {
         phone.setBrand("someBrand2");
         phone.setModel("someModel2");
 
+        Set<Color> colors = getTestColorSet();
+        phone.setColors(colors);
+
+        jdbcPhoneDao.save(phone);
+        Long phoneId = phone.getId();
+        Phone extractedPhone = jdbcPhoneDao.get(phoneId).get();
+        assertEquals(colors, extractedPhone.getColors());
+    }
+
+    @Test
+    public void testUpdatePhone() {
+        Phone phone = jdbcPhoneDao.get(1020L).get();
+        Set<Color> colors = getTestColorSet();
+
+        phone.setBrand("SomeBrand3");
+        phone.setBatteryCapacityMah(3000);
+        phone.setColors(colors);
+        jdbcPhoneDao.save(phone);
+        Phone updatedPhone = jdbcPhoneDao.get(1020L).get();
+        assertEquals("SomeBrand3", phone.getBrand());
+        assertEquals(Integer.valueOf(3000), phone.getBatteryCapacityMah());
+        assertEquals(colors, updatedPhone.getColors());
+    }
+
+    @Test(expected=NullPointerException.class)
+    public void testSaveNull() {
+        jdbcPhoneDao.save(null);
+    }
+
+    private Set<Color> getTestColorSet() {
         Color color1 = new Color();
         color1.setCode("Blue");
         color1.setId(1003L);
@@ -86,17 +116,7 @@ public class JdbcPhoneDaoTest {
         colors.add(color1);
         colors.add(color2);
 
-        phone.setColors(colors);
-
-        jdbcPhoneDao.save(phone);
-        Long phoneId = phone.getId();
-        Phone extractedPhone = jdbcPhoneDao.get(phoneId).get();
-        assertEquals(colors, extractedPhone.getColors());
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void testSaveNull() {
-        jdbcPhoneDao.save(null);
+        return colors;
     }
 
 }
