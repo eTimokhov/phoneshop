@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:context/JdbcPhoneDaoTest-context.xml")
+@ContextConfiguration("classpath:context/test-context.xml")
 public class JdbcPhoneDaoTest {
 
     @Resource

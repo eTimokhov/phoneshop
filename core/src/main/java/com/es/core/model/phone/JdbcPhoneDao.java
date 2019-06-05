@@ -72,12 +72,12 @@ public class JdbcPhoneDao implements PhoneDao {
         Objects.requireNonNull(phone);
         if (phone.getId() != null) {
             update(phone);
-            return;
+        } else {
+            SqlParameterSource parameters = new BeanPropertySqlParameterSource(phone);
+            Long phoneId = insertPhone.executeAndReturnKey(parameters).longValue();
+            phone.setId(phoneId);
+            saveColors(phone);
         }
-        SqlParameterSource parameters = new BeanPropertySqlParameterSource(phone);
-        Long phoneId = insertPhone.executeAndReturnKey(parameters).longValue();
-        phone.setId(phoneId);
-        saveColors(phone);
     }
 
     private void update(Phone phone) {
