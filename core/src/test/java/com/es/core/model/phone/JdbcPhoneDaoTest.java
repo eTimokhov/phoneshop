@@ -1,8 +1,8 @@
 package com.es.core.model.phone;
 
+import com.es.core.annotation.IntegrationTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
+@IntegrationTest
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:context/test-context.xml")
 public class JdbcPhoneDaoTest {
 
     @Resource
