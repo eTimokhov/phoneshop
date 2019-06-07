@@ -1,9 +1,7 @@
 package com.es.core.model.phone;
 
-import com.es.core.annotation.IntegrationTest;
+import com.es.core.IntegrationTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -12,9 +10,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
-@IntegrationTest
-@RunWith(SpringJUnit4ClassRunner.class)
-public class JdbcPhoneDaoTest {
+public class JdbcPhoneDaoTest extends IntegrationTest {
 
     @Resource
     private PhoneDao jdbcPhoneDao;
