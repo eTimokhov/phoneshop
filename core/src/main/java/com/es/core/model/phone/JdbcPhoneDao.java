@@ -37,7 +37,9 @@ public class JdbcPhoneDao implements PhoneDao {
                     "WHERE phoneId = ?";
 
     private static final String FIND_ALL_PHONES =
-            "SELECT * FROM phones OFFSET ? LIMIT ?";
+            "SELECT * FROM phones " +
+                    "JOIN stocks ON phones.id = stocks.phoneId " +
+                    "WHERE stock > 0 OFFSET ? LIMIT ?";
 
     private static final String FIND_PHONE_BY_ID =
             "SELECT * FROM phones WHERE id = ?";
