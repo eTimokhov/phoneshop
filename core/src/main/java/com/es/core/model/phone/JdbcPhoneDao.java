@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class JdbcPhoneDao implements PhoneDao {
@@ -70,6 +71,13 @@ public class JdbcPhoneDao implements PhoneDao {
         }
     }
 
+    public List<Phone> findAll(String searchQuery, String orderBy, boolean ascending, int offset, int limit) {
+        String sqlQuery = getFindAllSqlQuery(searchQuery, orderBy, ascending, offset, limit);
+        List<Phone> phones = jdbcTemplate.query(sqlQuery, phoneBeanPropertyRowMapper);
+        phones.forEach(p -> p.setColors(findColors(p.getId())));
+        return phones;
+    }
+
     public void save(final Phone phone) {
         Objects.requireNonNull(phone);
         if (phone.getId() != null) {
@@ -109,6 +117,26 @@ public class JdbcPhoneDao implements PhoneDao {
     private void saveColors(Phone phone) {
         Set<Color> colors = phone.getColors();
         colors.forEach(c -> jdbcTemplate.update(SAVE_PHONE_COLOR_PAIR, phone.getId(), c.getId()));
+    }
+
+    private String getFindAllSqlQuery(String searchQuery, String orderBy, boolean ascending, int offset, int limit) {
+        StringBuilder sqlQuery = new StringBuilder("SELECT * FROM phones " +
+                "JOIN stocks ON phones.id = stocks.phoneId " +
+                "WHERE stock > 0 ");
+
+        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+            String[] keywords = searchQuery.trim().split(" ");
+            List<String> modelMatches = Arrays.stream(keywords)
+                    .map(keyword -> "brand ILIKE '%" + keyword + "%' OR model ILIKE '%" + keyword + "%'")
+                    .collect(Collectors.toList());
+            sqlQuery.append("AND (").append(String.join(" OR ", modelMatches)).append(") ");
+        }
+
+        sqlQuery.append("ORDER BY ").append(orderBy);
+        sqlQuery.append(ascending ? " ASC " : " DESC ");
+        sqlQuery.append("OFFSET ").append(offset).append(" LIMIT ").append(limit);
+
+        return sqlQuery.toString();
     }
 
 }
