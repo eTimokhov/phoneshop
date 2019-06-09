@@ -33,6 +33,8 @@
         <constructor-arg value="com.es.core.model.phone.Color" />
     </bean>
 
+
+
     <jdbc:initialize-database enabled="${db.insertSchema}" data-source="dataSource">
         <jdbc:script location="classpath:db/schema.sql"/>
     </jdbc:initialize-database>
