@@ -33,7 +33,9 @@
         <constructor-arg value="com.es.core.model.phone.Color" />
     </bean>
 
-
+    <bean id="stockBeanPropertyRowMapper" class="org.springframework.jdbc.core.BeanPropertyRowMapper">
+        <constructor-arg value="com.es.core.model.stock.Stock" />
+    </bean>
 
     <jdbc:initialize-database enabled="${db.insertSchema}" data-source="dataSource">
         <jdbc:script location="classpath:db/schema.sql"/>
