@@ -8,6 +8,7 @@ import com.es.core.order.OutOfStockException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Optional;
 
@@ -25,6 +26,13 @@ public class HttpSessionCartService implements CartService {
     @Override
     public Cart getCart() {
         return cart;
+    }
+
+    @Override
+    public Long getTotalCount() {
+        return cart.getCartItems().stream()
+                .mapToLong(CartItem::getQuantity)
+                .sum();
     }
 
     @Override
@@ -47,6 +55,7 @@ public class HttpSessionCartService implements CartService {
         } else {
             cart.getCartItems().add(new CartItem(phone, quantity));
         }
+        recalculateTotalPrice();
     }
 
     @Override
@@ -61,6 +70,7 @@ public class HttpSessionCartService implements CartService {
                 addPhone(entry.getKey(), entry.getValue());
             }
         }
+        recalculateTotalPrice();
     }
 
     @Override
@@ -68,4 +78,11 @@ public class HttpSessionCartService implements CartService {
         cart.getCartItems().removeIf(ci -> ci.getPhone().getId().equals(phoneId));
     }
 
+    private void recalculateTotalPrice() {
+        BigDecimal totalPrice = cart.getCartItems().stream()
+                .map(ci -> ci.getPhone().getPrice().multiply(BigDecimal.valueOf(ci.getQuantity())))
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+        cart.setTotalPrice(totalPrice);
+    }
 }

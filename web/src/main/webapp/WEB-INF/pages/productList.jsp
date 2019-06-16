@@ -3,12 +3,17 @@
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
 <tags:template>
+<script type="text/javascript">
+    let addToCartUrl = '<c:url value="/ajaxCart"/>';
+    let getCartInfoUrl = '<c:url value="/ajaxCart"/>';
+</script>
+<script src="<c:url value="/resources/js/productList.js"/>"></script>
     <div class="container">
         <header class="clearfix">
             <h1>Phonify</h1>
             <div class="float-right">
                 <a href="#">Login</a>
-                <a href="#" class="btn btn-outline-secondary">Cart</a>
+                <a href="#" id="cart" class="btn btn-outline-secondary">Cart</a>
             </div>
         </header>
         <hr>
@@ -62,8 +67,11 @@
                     </td>
                     <td>${phone.displaySizeInches}&#34;</td>
                     <td>$ ${phone.price}</td>
-                    <td>input</td>
-                    <td>action</td>
+                    <td>
+                        <input type="text" id="quantity-input-${phone.id}" value="1"><br>
+                        <span class="error error-message" id="error-message-${phone.id}"></span>
+                    </td>
+                    <td><button onclick="addToCart(${phone.id}, $('#quantity-input-${phone.id}').val())">Add to cart</button></td>
                 </tr>
             </c:forEach>
             </tbody>

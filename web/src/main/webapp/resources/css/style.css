@@ -5,3 +5,7 @@
 .tr-fixed-height {
      height: 75px;
 }
+
+.error {
+    color: red;
+}

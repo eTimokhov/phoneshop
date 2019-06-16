@@ -40,7 +40,7 @@ public class JdbcPhoneDao implements PhoneDao {
     private static final String FIND_ALL_PHONES =
             "SELECT * FROM phones " +
                     "JOIN stocks ON phones.id = stocks.phoneId " +
-                    "WHERE stock > 0 OFFSET ? LIMIT ?";
+                    "WHERE stock > 0 AND price IS NOT NULL OFFSET ? LIMIT ?";
 
     private static final String FIND_PHONE_BY_ID =
             "SELECT * FROM phones WHERE id = ?";
@@ -122,7 +122,7 @@ public class JdbcPhoneDao implements PhoneDao {
     private String getFindAllSqlQuery(String searchQuery, String orderBy, boolean ascending, int offset, int limit) {
         StringBuilder sqlQuery = new StringBuilder("SELECT * FROM phones " +
                 "JOIN stocks ON phones.id = stocks.phoneId " +
-                "WHERE stock > 0 ");
+                "WHERE stock > 0 AND price IS NOT NULL ");
 
         if (searchQuery != null && !searchQuery.trim().isEmpty()) {
             String[] keywords = searchQuery.trim().split(" ");

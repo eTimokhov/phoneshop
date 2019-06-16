@@ -5,12 +5,13 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
 @Scope(value="session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class Cart {
-    private List<CartItem> cartItems;
+    private List<CartItem> cartItems = new ArrayList<>();
     private BigDecimal totalPrice = BigDecimal.ZERO;
 
     public List<CartItem> getCartItems() {

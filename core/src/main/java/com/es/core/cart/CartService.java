@@ -8,6 +8,8 @@ public interface CartService {
 
     Cart getCart();
 
+    Long getTotalCount();
+
     void addPhone(Long phoneId, Long quantity) throws OutOfStockException;
 
     /**
