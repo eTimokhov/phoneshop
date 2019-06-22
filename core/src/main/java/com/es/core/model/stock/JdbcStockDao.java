@@ -4,11 +4,13 @@ import com.es.core.model.phone.PhoneDao;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Objects;
 
 @Component
+@Transactional
 public class JdbcStockDao implements StockDao {
     @Resource
     private JdbcTemplate jdbcTemplate;

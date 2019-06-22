@@ -1,6 +1,8 @@
 package com.es.core.model.phone;
 
 import com.es.core.IntegrationTest;
+import com.es.core.model.stock.Stock;
+import com.es.core.model.stock.StockDao;
 import org.junit.Test;
 
 import javax.annotation.Resource;
@@ -14,6 +16,9 @@ public class JdbcPhoneDaoTest extends IntegrationTest {
 
     @Resource
     private PhoneDao jdbcPhoneDao;
+
+    @Resource
+    private StockDao stockDao;
 
     @Test
     public void testGetPhone() {
@@ -44,6 +49,32 @@ public class JdbcPhoneDaoTest extends IntegrationTest {
     public void testFindAllCountMatch() {
         List<Phone> phones = jdbcPhoneDao.findAll(0, 10);
         assertEquals(10, phones.size());
+    }
+
+    @Test
+    public void testFindAllSearch() {
+        Phone phone1 = savePhone("brand12","model1 se5", BigDecimal.valueOf(10.0), 10L);
+        Phone phone2 = savePhone("brand12","model2", BigDecimal.valueOf(10.0), 10L);
+        Phone phone3 = savePhone("brand12","model3 se5 alg", BigDecimal.valueOf(10.0), 10L);
+
+        List<Phone> result1 = jdbcPhoneDao.findAll("brand12","brand",true,0, Integer.MAX_VALUE);
+        assertTrue(result1.containsAll(Arrays.asList(phone1, phone2, phone3)));
+
+        List<Phone> result2 = jdbcPhoneDao.findAll("se5","brand",true,0, Integer.MAX_VALUE);
+        assertTrue(result2.containsAll(Arrays.asList(phone1, phone3)));
+        assertFalse(result2.contains(phone2));
+    }
+
+    @Test
+    public void testFindAllOrderBy() {
+        List<Phone> result1 = jdbcPhoneDao.findAll("","brand",true,0, 1000);
+        assertTrue(isSorted(result1, Comparator.comparing(Phone::getBrand)));
+
+        List<Phone> result2 = jdbcPhoneDao.findAll("","price",true,0, 1000);
+        assertTrue(isSorted(result2, Comparator.comparing(Phone::getPrice)));
+
+        List<Phone> result3 = jdbcPhoneDao.findAll("","displaySizeInches",false,0, 1000);
+        assertTrue(isSorted(result3, Comparator.comparing(Phone::getDisplaySizeInches).reversed()));
     }
 
     @Test
@@ -113,6 +144,38 @@ public class JdbcPhoneDaoTest extends IntegrationTest {
         colors.add(color2);
 
         return colors;
+    }
+
+    private Phone savePhone(String brand, String model, BigDecimal price, Long stockCount) {
+        Phone phone = new Phone();
+        phone.setBrand(brand);
+        phone.setModel(model);
+        phone.setPrice(price);
+
+        Stock stock = new Stock();
+        stock.setPhone(phone);
+        stock.setStock(stockCount);
+        stock.setReserved(0L);
+
+        jdbcPhoneDao.save(phone);
+        stockDao.insert(stock);
+        return phone;
+    }
+
+    private boolean isSorted(List<Phone> phones, Comparator<Phone> comparator) {
+        if (phones.size() <= 1) {
+            return true;
+        }
+        Iterator<Phone> iterator = phones.iterator();
+        Phone previous = iterator.next();
+        while (iterator.hasNext()) {
+            Phone current = iterator.next();
+            if (comparator.compare(previous, current) > 0) {
+                return false;
+            }
+            previous = current;
+        }
+        return true;
     }
 
 }
