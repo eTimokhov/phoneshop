@@ -1,6 +1,8 @@
 package com.es.core.model.stock;
 
 import com.es.core.model.phone.PhoneDao;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -25,7 +27,12 @@ public class JdbcStockDao implements StockDao {
 
     @Override
     public Stock getStock(Long phoneId) {
-        Stock stock = jdbcTemplate.queryForObject(FIND_STOCK_BY_PHONE_ID, stockBeanPropertyRowMapper, phoneId);
+        Stock stock;
+        try {
+            stock = jdbcTemplate.queryForObject(FIND_STOCK_BY_PHONE_ID, stockBeanPropertyRowMapper, phoneId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new IllegalArgumentException("Phone with id " + phoneId + " not found.");
+        }
         stock.setPhone(phoneDao.get(phoneId).orElseThrow(() -> new IllegalArgumentException("Phone with id " + phoneId + " not found.")));
         return stock;
     }

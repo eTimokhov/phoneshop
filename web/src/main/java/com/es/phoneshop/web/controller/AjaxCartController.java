@@ -43,7 +43,7 @@ public class AjaxCartController {
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET)
-    public GetCartInfoResponse getCartInfo(Long phoneId, Long quantity) {
+    public GetCartInfoResponse getCartInfo() {
         return new GetCartInfoResponse(cartService.getTotalCount(), cartService.getCart().getTotalPrice());
     }
 
