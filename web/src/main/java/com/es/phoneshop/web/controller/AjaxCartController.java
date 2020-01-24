@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.Arrays;
 
 @Controller
 @Validated
@@ -27,10 +28,19 @@ public class AjaxCartController {
     @RequestMapping(method = RequestMethod.POST)
     public AddToCartResponse addPhone(@Valid AddToCartRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            String errorMessage = bindingResult.getFieldErrors().stream()
-                    .findFirst()
-                    .map(FieldError::getDefaultMessage)
-                    .orElse("Invalid request");
+            boolean hasTypeMismatchError = bindingResult.getFieldErrors().stream()
+                    .flatMap(fieldError -> Arrays.stream(fieldError.getCodes()))
+                    .anyMatch(code -> code.equals("typeMismatch"));
+            String errorMessage;
+            if (hasTypeMismatchError) {
+                errorMessage = "You must provide a number";
+            } else {
+                errorMessage = bindingResult.getFieldErrors().stream()
+                        .findFirst()
+                        .map(FieldError::getDefaultMessage)
+                        .orElse("Invalid request");
+            }
+
             return new AddToCartResponse(false, request.getPhoneId(), errorMessage);
         }
         try {
