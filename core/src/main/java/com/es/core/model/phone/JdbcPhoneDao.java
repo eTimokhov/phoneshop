@@ -73,8 +73,8 @@ public class JdbcPhoneDao implements PhoneDao {
         }
     }
 
-    public List<Phone> findAll(String searchQuery, String orderBy, boolean ascending, int offset, int limit) {
-        String sqlQuery = getFindAllSqlQuery(searchQuery, orderBy, ascending, offset, limit);
+    public List<Phone> findAll(String searchTerms, String orderBy, boolean ascending, int offset, int limit) {
+        String sqlQuery = getFindAllSqlQuery(searchTerms, orderBy, ascending, offset, limit);
         List<Phone> phones = jdbcTemplate.query(sqlQuery, phoneBeanPropertyRowMapper);
         phones.forEach(p -> p.setColors(findColors(p.getId())));
         return phones;
@@ -121,23 +121,34 @@ public class JdbcPhoneDao implements PhoneDao {
         colors.forEach(c -> jdbcTemplate.update(SAVE_PHONE_COLOR_PAIR, phone.getId(), c.getId()));
     }
 
-    private String getFindAllSqlQuery(String searchQuery, String orderBy, boolean ascending, int offset, int limit) {
-        StringBuilder sqlQuery = new StringBuilder("SELECT * FROM phones " +
-                "JOIN stocks ON phones.id = stocks.phoneId " +
-                "WHERE stock > 0 AND price IS NOT NULL ");
+    @Override
+    public Integer findTotalCount(String searchTerms) {
+        String sqlQuery = buildQueryForSearch(searchTerms, "count(*)");
+        return jdbcTemplate.queryForObject(sqlQuery, Integer.class);
+    }
 
-        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-            String[] keywords = searchQuery.trim().split(" ");
-            List<String> modelMatches = Arrays.stream(keywords)
-                    .map(keyword -> "brand ILIKE '%" + keyword + "%' OR model ILIKE '%" + keyword + "%'")
-                    .collect(Collectors.toList());
-            sqlQuery.append("AND (").append(String.join(" OR ", modelMatches)).append(") ");
-        }
+    private String getFindAllSqlQuery(String searchTerms, String orderBy, boolean ascending, int offset, int limit) {
+        StringBuilder sqlQuery = new StringBuilder(buildQueryForSearch(searchTerms, "*"));
 
         sqlQuery.append("ORDER BY ").append(orderBy);
         sqlQuery.append(ascending ? " ASC " : " DESC ");
         sqlQuery.append("OFFSET ").append(offset).append(" LIMIT ").append(limit);
 
+        return sqlQuery.toString();
+    }
+
+    private String buildQueryForSearch(String searchTerms, String searchFor) {
+        StringBuilder sqlQuery = new StringBuilder("SELECT " + searchFor + " FROM phones " +
+                "JOIN stocks ON phones.id = stocks.phoneId " +
+                "WHERE stock > 0 AND price IS NOT NULL ");
+
+        if (searchTerms != null && !searchTerms.trim().isEmpty()) {
+            String[] keywords = searchTerms.trim().split(" ");
+            List<String> modelMatches = Arrays.stream(keywords)
+                    .map(keyword -> "brand ILIKE '%" + keyword + "%' OR model ILIKE '%" + keyword + "%'")
+                    .collect(Collectors.toList());
+            sqlQuery.append("AND (").append(String.join(" OR ", modelMatches)).append(") ");
+        }
         return sqlQuery.toString();
     }
 

@@ -7,11 +7,18 @@
     <c:url value="/productList" >
         <c:param name="orderBy" value="${orderBy}"/>
         <c:param name="asc" value="${asc}"/>
-        <c:if test="${not empty param.searchQuery}">
-            <c:param name="searchQuery" value="${param.searchQuery}"/>
+        <c:if test="${not empty param.searchTerms}">
+            <c:param name="searchTerms" value="${param.searchTerms}"/>
         </c:if>
         <c:param name="page" value="1"/>
     </c:url>
 ">
-    ${asc ? "🠛" : "🠙"}
+    <c:choose>
+        <c:when test="${asc}">
+            <i class="far fa-arrow-alt-circle-up"></i>
+        </c:when>
+        <c:otherwise>
+            <i class="far fa-arrow-alt-circle-down"></i>
+        </c:otherwise>
+    </c:choose>
 </a>

@@ -1,13 +1,13 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
 <tags:template>
-<script type="text/javascript">
-    let addToCartUrl = '<c:url value="/ajaxCart"/>';
-    let getCartInfoUrl = '<c:url value="/ajaxCart"/>';
-</script>
-<script src="<c:url value="/resources/js/productList.js"/>"></script>
+    <script type="text/javascript">
+        let addToCartUrl = '<c:url value="/ajaxCart"/>';
+        let getCartInfoUrl = '<c:url value="/ajaxCart"/>';
+    </script>
+    <script src="<c:url value="/resources/js/productList.js"/>"></script>
     <div class="container">
         <header class="clearfix">
             <h1>Phonify</h1>
@@ -20,9 +20,9 @@
         <div>
             <h3>Phones</h3>
             <form class="form-inline float-right" action="<c:url value="/productList"/>">
-                <button class="btn btn-light">Search</button>
-                <input name="searchQuery" class="form-control" type="text" value="${param.searchQuery}"
+                <input name="searchTerms" class="form-control" type="text" value="${param.searchTerms}"
                        placeholder="Keywords...">
+                <button class="btn btn-light">Search</button>
             </form>
         </div>
         <table class="table table-bordered table-striped">
@@ -71,11 +71,21 @@
                         <input type="text" id="quantity-input-${phone.id}" value="1"><br>
                         <span class="error error-message" id="error-message-${phone.id}"></span>
                     </td>
-                    <td><button onclick="addToCart(${phone.id}, $('#quantity-input-${phone.id}').val())">Add to cart</button></td>
+                    <td>
+                        <button onclick="addToCart(${phone.id}, $('#quantity-input-${phone.id}').val())">Add to cart
+                        </button>
+                    </td>
                 </tr>
             </c:forEach>
             </tbody>
         </table>
-        <tags:pagination activePage="${not empty param.page ? param.page : 1}"/>
+        <c:choose>
+            <c:when test="${totalCount > 0}">
+                <tags:pagination activePage="${not empty param.page ? param.page : 1}" resultsPerPage="${resultsPerPage}" totalCount="${totalCount}"/>
+            </c:when>
+            <c:otherwise>
+                <p>No results found.</p>
+            </c:otherwise>
+        </c:choose>
     </div>
 </tags:template>

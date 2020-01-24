@@ -27,6 +27,6 @@ function updateCart(totalCount, totalPrice) {
     $("#cart").text(`Cart: ${totalCount} items, $${totalPrice}`)
 }
 
-$(document).ready(function () {
+$(function () {
     getCartInfo();
 });

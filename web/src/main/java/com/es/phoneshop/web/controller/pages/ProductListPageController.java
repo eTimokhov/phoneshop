@@ -17,17 +17,23 @@ import java.util.List;
 @Controller
 @RequestMapping (value = "/productList")
 public class ProductListPageController {
+
     @Resource
     private PhoneDao phoneDao;
 
+    private static final int RESULTS_PER_PAGE = 10;
+
     @RequestMapping(method = RequestMethod.GET)
-    public String showProductList(@RequestParam(value = "searchQuery", required = false) String searchQuery,
+    public String showProductList(@RequestParam(value = "searchTerms", required = false) String searchTerms,
                                   @RequestParam(value = "orderBy", defaultValue = "model") String orderBy,
                                   @RequestParam(value = "asc", defaultValue = "true") boolean ascending,
                                   @RequestParam(value = "page", defaultValue = "1") int page,
                                   Model model) {
-        List<Phone> phones = phoneDao.findAll(searchQuery, orderBy, ascending, (page - 1) * 10, 10);
+        List<Phone> phones = phoneDao.findAll(searchTerms, orderBy, ascending, (page - 1) * RESULTS_PER_PAGE, RESULTS_PER_PAGE);
+        Integer totalCount = phoneDao.findTotalCount(searchTerms);
         model.addAttribute("phones", phones);
+        model.addAttribute("totalCount", totalCount);
+        model.addAttribute("resultsPerPage", RESULTS_PER_PAGE);
         return "productList";
     }
 }
