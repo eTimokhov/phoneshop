@@ -1,7 +1,6 @@
 package com.es.core.cart;
 
 import com.es.core.IntegrationTest;
-import com.es.core.model.phone.Color;
 import com.es.core.model.phone.Phone;
 import com.es.core.model.phone.PhoneDao;
 import com.es.core.model.stock.Stock;
@@ -9,31 +8,23 @@ import com.es.core.model.stock.StockDao;
 import com.es.core.order.OutOfStockException;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.annotation.Transactional;
+import org.mockito.Spy;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 
-@RunWith(MockitoJUnitRunner.class)
-public class HttpSessionCartServiceTest {
+public class HttpSessionCartServiceTest extends IntegrationTest {
 
-    @Mock
-    private Cart cart = new Cart();
+    @Spy
+    private Cart cart;
 
     @Mock
     private PhoneDao phoneDao;
@@ -42,9 +33,8 @@ public class HttpSessionCartServiceTest {
     private StockDao stockDao;
 
     @InjectMocks
-    private CartService httpSessionCartService = new HttpSessionCartService();
-
-    private List<CartItem> cartItems = new ArrayList<>();
+    @Resource
+    private CartService httpSessionCartService;
 
     @Before
     public void clearCart() {
@@ -54,7 +44,6 @@ public class HttpSessionCartServiceTest {
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this);
-       // when(cart.getCartItems()).thenReturn(cartItems);
 
         Phone phone1 = createPhone(1000L, BigDecimal.valueOf(100.0));
         Stock stock1 = createStock(phone1, 20L, 10L);
@@ -62,7 +51,7 @@ public class HttpSessionCartServiceTest {
         when(stockDao.getStock(1000L)).thenReturn(stock1);
 
         Phone phone2 = createPhone(1001L, BigDecimal.valueOf(250.0));
-        Stock stock2 = createStock(phone2, 10L, 8L);
+        Stock stock2 = createStock(phone2, 30L, 15L);
         when(phoneDao.get(1001L)).thenReturn(Optional.of(phone2));
         when(stockDao.getStock(1001L)).thenReturn(stock2);
 
@@ -77,6 +66,35 @@ public class HttpSessionCartServiceTest {
 
         httpSessionCartService.addPhone(1001L, 2L);
         assertEquals(BigDecimal.valueOf(600.0), cart.getTotalPrice());
+    }
+
+    @Test
+    public void testTotalCountCalculation() throws OutOfStockException {
+        httpSessionCartService.addPhone(1000L, 2L);
+        assertEquals((Long)2L, httpSessionCartService.getTotalCount());
+
+        httpSessionCartService.addPhone(1001L, 2L);
+        assertEquals((Long)4L, httpSessionCartService.getTotalCount());
+
+        httpSessionCartService.addPhone(1000L, 1L);
+        assertEquals((Long)5L, httpSessionCartService.getTotalCount());
+
+    }
+
+    @Test
+    public void testRemoveItems() throws OutOfStockException {
+        httpSessionCartService.addPhone(1000L, 2L);
+        httpSessionCartService.addPhone(1001L, 3L);
+        assertEquals((Long)5L, httpSessionCartService.getTotalCount());
+
+        httpSessionCartService.remove(1000L);
+        assertEquals((Long)3L, httpSessionCartService.getTotalCount());
+
+    }
+
+    @Test(expected = OutOfStockException.class)
+    public void testOutOfStock() throws OutOfStockException {
+        httpSessionCartService.addPhone(1000L, 11L);
     }
 
     private Phone createPhone(Long phoneId, BigDecimal price) {
