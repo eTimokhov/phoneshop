@@ -53,27 +53,27 @@ public class JdbcPhoneDaoTest extends IntegrationTest {
 
     @Test
     public void testFindAllSearch() {
-        Phone phone1 = savePhone("brand12","model1 se5", BigDecimal.valueOf(10.0), 10L);
-        Phone phone2 = savePhone("brand12","model2", BigDecimal.valueOf(10.0), 10L);
-        Phone phone3 = savePhone("brand12","model3 se5 alg", BigDecimal.valueOf(10.0), 10L);
+        Phone phone1 = savePhone("brand12", "model1 se5", BigDecimal.valueOf(10.0), 10L);
+        Phone phone2 = savePhone("brand12", "model2", BigDecimal.valueOf(10.0), 10L);
+        Phone phone3 = savePhone("brand12", "model3 se5 alg", BigDecimal.valueOf(10.0), 10L);
 
-        List<Phone> result1 = jdbcPhoneDao.findAll("brand12","brand",true,0, Integer.MAX_VALUE);
+        List<Phone> result1 = jdbcPhoneDao.findAll("brand12", "brand", SortingDirection.ASCENDING, 0, Integer.MAX_VALUE);
         assertTrue(result1.containsAll(Arrays.asList(phone1, phone2, phone3)));
 
-        List<Phone> result2 = jdbcPhoneDao.findAll("se5","brand",true,0, Integer.MAX_VALUE);
+        List<Phone> result2 = jdbcPhoneDao.findAll("se5", "brand", SortingDirection.ASCENDING, 0, Integer.MAX_VALUE);
         assertTrue(result2.containsAll(Arrays.asList(phone1, phone3)));
         assertFalse(result2.contains(phone2));
     }
 
     @Test
     public void testFindAllOrderBy() {
-        List<Phone> result1 = jdbcPhoneDao.findAll("","brand",true,0, 1000);
+        List<Phone> result1 = jdbcPhoneDao.findAll("", "brand", SortingDirection.ASCENDING, 0, 1000);
         assertTrue(isSorted(result1, Comparator.comparing(Phone::getBrand)));
 
-        List<Phone> result2 = jdbcPhoneDao.findAll("","price",true,0, 1000);
+        List<Phone> result2 = jdbcPhoneDao.findAll("", "price", SortingDirection.ASCENDING, 0, 1000);
         assertTrue(isSorted(result2, Comparator.comparing(Phone::getPrice)));
 
-        List<Phone> result3 = jdbcPhoneDao.findAll("","displaySizeInches",false,0, 1000);
+        List<Phone> result3 = jdbcPhoneDao.findAll("", "displaySizeInches", SortingDirection.DESCENDING, 0, 1000);
         assertTrue(isSorted(result3, Comparator.comparing(Phone::getDisplaySizeInches).reversed()));
     }
 
@@ -125,7 +125,7 @@ public class JdbcPhoneDaoTest extends IntegrationTest {
         assertEquals(colors, updatedPhone.getColors());
     }
 
-    @Test(expected=NullPointerException.class)
+    @Test(expected = NullPointerException.class)
     public void testSaveNull() {
         jdbcPhoneDao.save(null);
     }

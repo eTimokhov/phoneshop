@@ -77,8 +77,8 @@ public class JdbcPhoneDao implements PhoneDao {
     }
 
     @Override
-    public List<Phone> findAll(String searchTerms, String orderBy, boolean ascending, int offset, int limit) {
-        String sqlQuery = getFindAllSqlQuery(searchTerms, orderBy, ascending, offset, limit);
+    public List<Phone> findAll(String searchTerms, String orderBy, SortingDirection sortingDirection, int offset, int limit) {
+        String sqlQuery = getFindAllSqlQuery(searchTerms, orderBy, sortingDirection, offset, limit);
         List<Phone> phones = jdbcTemplate.query(sqlQuery, phoneBeanPropertyRowMapper);
         phones.forEach(p -> p.setColors(findColors(p.getId())));
         return phones;
@@ -133,11 +133,11 @@ public class JdbcPhoneDao implements PhoneDao {
         return jdbcTemplate.queryForObject(sqlQuery, Integer.class);
     }
 
-    private String getFindAllSqlQuery(String searchTerms, String orderBy, boolean ascending, int offset, int limit) {
+    private String getFindAllSqlQuery(String searchTerms, String orderBy, SortingDirection sortingDirection, int offset, int limit) {
         StringBuilder sqlQuery = new StringBuilder(buildQueryForSearch(searchTerms, "*"));
 
         sqlQuery.append("ORDER BY ").append(orderBy);
-        sqlQuery.append(ascending ? " ASC " : " DESC ");
+        sqlQuery.append(sortingDirection == SortingDirection.DESCENDING ? " DESC " : " ASC ");
         sqlQuery.append("OFFSET ").append(offset).append(" LIMIT ").append(limit);
 
         return sqlQuery.toString();

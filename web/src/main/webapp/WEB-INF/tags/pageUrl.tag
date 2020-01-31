@@ -7,8 +7,8 @@
     <c:if test="${not empty param.orderBy}">
         <c:param name="orderBy" value="${param.orderBy}"/>
     </c:if>
-    <c:if test="${not empty param.asc}">
-        <c:param name="asc" value="${param.asc}"/>
+    <c:if test="${not empty param.sortDirection}">
+        <c:param name="sortDirection" value="${param.sortDirection}"/>
     </c:if>
     <c:if test="${not empty param.searchTerms}">
         <c:param name="searchTerms" value="${param.searchTerms}"/>

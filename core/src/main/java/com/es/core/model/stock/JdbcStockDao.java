@@ -14,16 +14,16 @@ import java.util.Optional;
 @Component
 @Transactional
 public class JdbcStockDao implements StockDao {
+    private static final String FIND_STOCK_BY_PHONE_ID = "SELECT * FROM stocks WHERE phoneId = ?";
+    private static final String UPDATE_STOCK = "UPDATE stocks SET stock = ?, reserved = ? WHERE phoneId = ?";
+    private static final String INSERT_STOCK = "INSERT INTO stocks (phoneId, stock, reserved) VALUES (?, ?, ?);";
+
     @Resource
     private JdbcTemplate jdbcTemplate;
     @Resource
     private BeanPropertyRowMapper<Stock> stockBeanPropertyRowMapper;
     @Resource
     private PhoneDao phoneDao;
-
-    private static final String FIND_STOCK_BY_PHONE_ID = "SELECT * FROM stocks WHERE phoneId = ?";
-    private static final String UPDATE_STOCK = "UPDATE stocks SET stock = ?, reserved = ? WHERE phoneId = ?";
-    private static final String INSERT_STOCK = "INSERT INTO stocks (phoneId, stock, reserved) VALUES (?, ?, ?);";
 
     @Override
     public Optional<Stock> getStock(Long phoneId) {

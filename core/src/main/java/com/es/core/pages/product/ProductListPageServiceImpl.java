@@ -2,6 +2,7 @@ package com.es.core.pages.product;
 
 import com.es.core.model.phone.Phone;
 import com.es.core.model.phone.PhoneDao;
+import com.es.core.model.phone.SortingDirection;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -14,8 +15,8 @@ public class ProductListPageServiceImpl implements ProductListPageService {
     private PhoneDao phoneDao;
 
     @Override
-    public List<Phone> findPage(String searchTerms, String orderBy, boolean ascending, int page, int resultsPerPage) {
-        return phoneDao.findAll(searchTerms, orderBy, ascending, (page - 1) * resultsPerPage, resultsPerPage);
+    public List<Phone> findPage(String searchTerms, String orderBy, SortingDirection sortingDirection, int page, int resultsPerPage) {
+        return phoneDao.findAll(searchTerms, orderBy, sortingDirection, (page - 1) * resultsPerPage, resultsPerPage);
     }
 
     @Override
