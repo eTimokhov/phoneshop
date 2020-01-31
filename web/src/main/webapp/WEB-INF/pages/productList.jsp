@@ -80,8 +80,8 @@
             </tbody>
         </table>
         <c:choose>
-            <c:when test="${totalCount > 0}">
-                <tags:pagination activePage="${not empty param.page ? param.page : 1}" resultsPerPage="${resultsPerPage}" totalCount="${totalCount}"/>
+            <c:when test="${paginationData.totalCount > 0}">
+                <tags:pagination activePage="${not empty param.page ? param.page : 1}" resultsPerPage="${paginationData.resultsPerPage}" totalCount="${paginationData.totalCount}"/>
             </c:when>
             <c:otherwise>
                 <p>No results found.</p>

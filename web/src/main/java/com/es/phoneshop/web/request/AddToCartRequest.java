@@ -8,8 +8,8 @@ public class AddToCartRequest {
     @NotNull
     private Long phoneId;
 
-    @NotNull(message = "Quantity is not specified")
-    @Min(value = 1, message = "Quantity must be greater than 0")
+    @NotNull
+    @Min(value = 1)
     private Long quantity;
 
     public Long getPhoneId() {

@@ -3,7 +3,7 @@ package com.es.phoneshop.web.response;
 public class AddToCartResponse {
     private boolean success;
     private Long phoneId;
-    private String errorMessage;
+    private String errorCode;
 
     public AddToCartResponse() {
     }
@@ -12,10 +12,10 @@ public class AddToCartResponse {
         this.success = success;
     }
 
-    public AddToCartResponse(boolean success, Long phoneId, String errorMessage) {
+    public AddToCartResponse(boolean success, Long phoneId, String errorCode) {
         this.success = success;
         this.phoneId = phoneId;
-        this.errorMessage = errorMessage;
+        this.errorCode = errorCode;
     }
 
 
@@ -35,11 +35,11 @@ public class AddToCartResponse {
         this.phoneId = phoneId;
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
+    public String getErrorCode() {
+        return errorCode;
     }
 
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
     }
 }

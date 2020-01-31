@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class JdbcStockDaoTest extends IntegrationTest {
     @Resource
@@ -24,19 +25,20 @@ public class JdbcStockDaoTest extends IntegrationTest {
         stock1.setPhone(phone1);
         stock1.setStock(13L);
         stock1.setReserved(2L);
-        assertEquals(stock1, jdbcStockDao.getStock(1003L));
+        assertEquals(stock1, jdbcStockDao.getStock(1003L).get());
 
         Phone phone2 = phoneDao.get(1121L).get();
         Stock stock2 = new Stock();
         stock2.setPhone(phone2);
         stock2.setStock(11L);
         stock2.setReserved(10L);
-        assertEquals(stock2, jdbcStockDao.getStock(1121L));
+        assertEquals(stock2, jdbcStockDao.getStock(1121L).get());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testGetStockIncorrectPhone() {
         jdbcStockDao.getStock(999L);
+        assertFalse(jdbcStockDao.getStock(999L).isPresent());
     }
 
     @Test
@@ -57,7 +59,7 @@ public class JdbcStockDaoTest extends IntegrationTest {
 
         long phoneId = phone.getId();
 
-        assertEquals(stock, jdbcStockDao.getStock(phoneId));
+        assertEquals(stock, jdbcStockDao.getStock(phoneId).get());
     }
 
     @Test(expected = NullPointerException.class)
@@ -67,13 +69,13 @@ public class JdbcStockDaoTest extends IntegrationTest {
 
     @Test
     public void testUpdate() {
-        Stock stock = jdbcStockDao.getStock(1003L);
+        Stock stock = jdbcStockDao.getStock(1003L).get();
         stock.setStock(50L);
         stock.setReserved(10L);
 
         jdbcStockDao.update(stock);
 
-        Stock updatedStock = jdbcStockDao.getStock(1003L);
+        Stock updatedStock = jdbcStockDao.getStock(1003L).get();
         assertEquals(updatedStock, stock);
     }
 

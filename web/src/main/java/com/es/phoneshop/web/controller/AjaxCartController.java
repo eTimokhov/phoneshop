@@ -1,6 +1,7 @@
 package com.es.phoneshop.web.controller;
 
 import com.es.core.cart.CartService;
+import com.es.core.model.ItemNotFoundException;
 import com.es.core.order.OutOfStockException;
 import com.es.phoneshop.web.request.AddToCartRequest;
 import com.es.phoneshop.web.response.AddToCartResponse;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.util.Arrays;
 
 @Controller
 @Validated
@@ -23,30 +23,21 @@ import java.util.Arrays;
 public class AjaxCartController {
     @Resource
     private CartService cartService;
-
+    //NotNull Min typeMismatch OutOfStockException
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
     public AddToCartResponse addPhone(@Valid AddToCartRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            boolean hasTypeMismatchError = bindingResult.getFieldErrors().stream()
-                    .flatMap(fieldError -> Arrays.stream(fieldError.getCodes()))
-                    .anyMatch(code -> code.equals("typeMismatch"));
-            String errorMessage;
-            if (hasTypeMismatchError) {
-                errorMessage = "You must provide a number";
-            } else {
-                errorMessage = bindingResult.getFieldErrors().stream()
+            String errorMessage = bindingResult.getFieldErrors().stream()
                         .findFirst()
-                        .map(FieldError::getDefaultMessage)
+                        .map(FieldError::getCode)
                         .orElse("Invalid request");
-            }
-
             return new AddToCartResponse(false, request.getPhoneId(), errorMessage);
         }
         try {
             cartService.addPhone(request.getPhoneId(), request.getQuantity());
-        } catch (OutOfStockException e) {
-            return new AddToCartResponse(false, request.getPhoneId(),"Not enough stock");
+        } catch (OutOfStockException | ItemNotFoundException e) {
+            return new AddToCartResponse(false, request.getPhoneId(), e.getClass().getSimpleName());
         }
         return new AddToCartResponse(true);
     }

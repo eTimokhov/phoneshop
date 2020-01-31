@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -17,23 +18,6 @@ import java.util.stream.Collectors;
 @Component
 @Transactional
 public class JdbcPhoneDao implements PhoneDao {
-    @Resource
-    private JdbcTemplate jdbcTemplate;
-    @Resource
-    private BeanPropertyRowMapper<Phone> phoneBeanPropertyRowMapper;
-    @Resource
-    private BeanPropertyRowMapper<Color> colorBeanPropertyRowMapper;
-
-    private SimpleJdbcInsert insertPhone;
-
-
-    @PostConstruct
-    public void init() {
-        insertPhone = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("phones")
-                .usingGeneratedKeyColumns("id");
-    }
-
     private static final String FIND_COLORS_BY_PHONE_ID =
             "SELECT * FROM colors " +
                     "JOIN phone2color ON colors.id = phone2color.colorId " +
@@ -63,6 +47,25 @@ public class JdbcPhoneDao implements PhoneDao {
     private static final String DELETE_COLORS_WITH_PHONE_ID =
             "DELETE FROM phone2color WHERE phoneId = ?";
 
+    @Resource
+    private JdbcTemplate jdbcTemplate;
+    @Resource
+    private BeanPropertyRowMapper<Phone> phoneBeanPropertyRowMapper;
+    @Resource
+    private BeanPropertyRowMapper<Color> colorBeanPropertyRowMapper;
+
+    private SimpleJdbcInsert insertPhone;
+
+
+
+    @PostConstruct
+    public void init() {
+        insertPhone = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("phones")
+                .usingGeneratedKeyColumns("id");
+    }
+
+    @Override
     public Optional<Phone> get(final Long key) {
         try {
             Phone phone = jdbcTemplate.queryForObject(FIND_PHONE_BY_ID, phoneBeanPropertyRowMapper, key);
@@ -73,6 +76,7 @@ public class JdbcPhoneDao implements PhoneDao {
         }
     }
 
+    @Override
     public List<Phone> findAll(String searchTerms, String orderBy, boolean ascending, int offset, int limit) {
         String sqlQuery = getFindAllSqlQuery(searchTerms, orderBy, ascending, offset, limit);
         List<Phone> phones = jdbcTemplate.query(sqlQuery, phoneBeanPropertyRowMapper);
@@ -80,6 +84,7 @@ public class JdbcPhoneDao implements PhoneDao {
         return phones;
     }
 
+    @Override
     public void save(final Phone phone) {
         Objects.requireNonNull(phone);
         if (phone.getId() != null) {
@@ -106,6 +111,7 @@ public class JdbcPhoneDao implements PhoneDao {
         saveColors(phone);
     }
 
+    @Override
     public List<Phone> findAll(int offset, int limit) {
         List<Phone> phones = jdbcTemplate.query(FIND_ALL_PHONES, phoneBeanPropertyRowMapper, offset, limit);
         phones.forEach(p -> p.setColors(findColors(p.getId())));
@@ -122,7 +128,7 @@ public class JdbcPhoneDao implements PhoneDao {
     }
 
     @Override
-    public Integer findTotalCount(String searchTerms) {
+    public int findTotalCount(String searchTerms) {
         String sqlQuery = buildQueryForSearch(searchTerms, "count(*)");
         return jdbcTemplate.queryForObject(sqlQuery, Integer.class);
     }
@@ -142,7 +148,7 @@ public class JdbcPhoneDao implements PhoneDao {
                 "JOIN stocks ON phones.id = stocks.phoneId " +
                 "WHERE stock > 0 AND price IS NOT NULL ");
 
-        if (searchTerms != null && !searchTerms.trim().isEmpty()) {
+        if (StringUtils.hasText(searchTerms)) {
             String[] keywords = searchTerms.trim().split(" ");
             List<String> modelMatches = Arrays.stream(keywords)
                     .map(keyword -> "brand ILIKE '%" + keyword + "%' OR model ILIKE '%" + keyword + "%'")

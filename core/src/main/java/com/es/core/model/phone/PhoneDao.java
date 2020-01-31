@@ -8,5 +8,5 @@ public interface PhoneDao {
     void save(Phone phone);
     List<Phone> findAll(int offset, int limit);
     List<Phone> findAll(String searchTerms, String orderBy, boolean ascending, int offset, int limit);
-    Integer findTotalCount(String searchTerms);
+    int findTotalCount(String searchTerms);
 }

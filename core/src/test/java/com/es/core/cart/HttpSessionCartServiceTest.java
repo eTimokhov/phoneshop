@@ -1,6 +1,7 @@
 package com.es.core.cart;
 
 import com.es.core.IntegrationTest;
+import com.es.core.model.ItemNotFoundException;
 import com.es.core.model.phone.Phone;
 import com.es.core.model.phone.PhoneDao;
 import com.es.core.model.stock.Stock;
@@ -48,17 +49,17 @@ public class HttpSessionCartServiceTest extends IntegrationTest {
         Phone phone1 = createPhone(1000L, BigDecimal.valueOf(100.0));
         Stock stock1 = createStock(phone1, 20L, 10L);
         when(phoneDao.get(1000L)).thenReturn(Optional.of(phone1));
-        when(stockDao.getStock(1000L)).thenReturn(stock1);
+        when(stockDao.getStock(1000L)).thenReturn(Optional.of(stock1));
 
         Phone phone2 = createPhone(1001L, BigDecimal.valueOf(250.0));
         Stock stock2 = createStock(phone2, 30L, 15L);
         when(phoneDao.get(1001L)).thenReturn(Optional.of(phone2));
-        when(stockDao.getStock(1001L)).thenReturn(stock2);
+        when(stockDao.getStock(1001L)).thenReturn(Optional.of(stock2));
 
     }
 
     @Test
-    public void testPriceCalculation() throws OutOfStockException {
+    public void testPriceCalculation() throws OutOfStockException, ItemNotFoundException {
         Cart cart = httpSessionCartService.getCart();
 
         httpSessionCartService.addPhone(1000L, 1L);
@@ -69,7 +70,7 @@ public class HttpSessionCartServiceTest extends IntegrationTest {
     }
 
     @Test
-    public void testTotalCountCalculation() throws OutOfStockException {
+    public void testTotalCountCalculation() throws OutOfStockException, ItemNotFoundException {
         httpSessionCartService.addPhone(1000L, 2L);
         assertEquals((Long)2L, httpSessionCartService.getTotalCount());
 
@@ -82,7 +83,7 @@ public class HttpSessionCartServiceTest extends IntegrationTest {
     }
 
     @Test
-    public void testRemoveItems() throws OutOfStockException {
+    public void testRemoveItems() throws OutOfStockException, ItemNotFoundException {
         httpSessionCartService.addPhone(1000L, 2L);
         httpSessionCartService.addPhone(1001L, 3L);
         assertEquals((Long)5L, httpSessionCartService.getTotalCount());
@@ -93,7 +94,7 @@ public class HttpSessionCartServiceTest extends IntegrationTest {
     }
 
     @Test(expected = OutOfStockException.class)
-    public void testOutOfStock() throws OutOfStockException {
+    public void testOutOfStock() throws OutOfStockException, ItemNotFoundException {
         httpSessionCartService.addPhone(1000L, 11L);
     }
 

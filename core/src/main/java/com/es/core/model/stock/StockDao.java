@@ -1,7 +1,9 @@
 package com.es.core.model.stock;
 
+import java.util.Optional;
+
 public interface StockDao {
-    Stock getStock(Long phoneId);
+    Optional<Stock> getStock(Long phoneId);
     void insert(Stock stock);
     void update(Stock stock);
 }
