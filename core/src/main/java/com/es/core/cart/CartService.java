@@ -1,6 +1,5 @@
 package com.es.core.cart;
 
-import com.es.core.model.ItemNotFoundException;
 import com.es.core.order.OutOfStockException;
 
 import java.util.Map;
@@ -9,9 +8,9 @@ public interface CartService {
 
     Cart getCart();
 
-    Long getTotalCount();
+    Long getTotalProductsQuantity();
 
-    void addPhone(Long phoneId, Long quantity) throws OutOfStockException, ItemNotFoundException;
+    void addPhone(Long phoneId, Long quantity) throws OutOfStockException;
 
     /**
      * @param items
@@ -20,5 +19,5 @@ public interface CartService {
      */
     void update(Map<Long, Long> items);
 
-    void remove(Long phoneId) throws OutOfStockException, ItemNotFoundException;
+    void remove(Long phoneId) throws OutOfStockException;
 }

@@ -1,7 +1,6 @@
 package com.es.core.cart;
 
 import com.es.core.IntegrationTest;
-import com.es.core.model.ItemNotFoundException;
 import com.es.core.model.phone.Phone;
 import com.es.core.model.phone.PhoneDao;
 import com.es.core.model.stock.Stock;
@@ -46,6 +45,8 @@ public class HttpSessionCartServiceTest extends IntegrationTest {
     public void init() {
         MockitoAnnotations.initMocks(this);
 
+        cart.init();
+
         Phone phone1 = createPhone(1000L, BigDecimal.valueOf(100.0));
         Stock stock1 = createStock(phone1, 20L, 10L);
         when(phoneDao.get(1000L)).thenReturn(Optional.of(phone1));
@@ -59,7 +60,7 @@ public class HttpSessionCartServiceTest extends IntegrationTest {
     }
 
     @Test
-    public void testPriceCalculation() throws OutOfStockException, ItemNotFoundException {
+    public void testPriceCalculation() throws OutOfStockException {
         Cart cart = httpSessionCartService.getCart();
 
         httpSessionCartService.addPhone(1000L, 1L);
@@ -70,32 +71,32 @@ public class HttpSessionCartServiceTest extends IntegrationTest {
     }
 
     @Test
-    public void testTotalCountCalculation() throws OutOfStockException, ItemNotFoundException {
+    public void testTotalCountCalculation() throws OutOfStockException {
         httpSessionCartService.addPhone(1000L, 2L);
-        assertEquals((Long)2L, httpSessionCartService.getTotalCount());
+        assertEquals((Long)2L, httpSessionCartService.getTotalProductsQuantity());
 
         httpSessionCartService.addPhone(1001L, 2L);
-        assertEquals((Long)4L, httpSessionCartService.getTotalCount());
+        assertEquals((Long)4L, httpSessionCartService.getTotalProductsQuantity());
 
         httpSessionCartService.addPhone(1000L, 1L);
-        assertEquals((Long)5L, httpSessionCartService.getTotalCount());
+        assertEquals((Long)5L, httpSessionCartService.getTotalProductsQuantity());
 
     }
 
     @Test
-    public void testRemoveItems() throws OutOfStockException, ItemNotFoundException {
+    public void testRemoveItems() throws OutOfStockException {
         httpSessionCartService.addPhone(1000L, 2L);
         httpSessionCartService.addPhone(1001L, 3L);
-        assertEquals((Long)5L, httpSessionCartService.getTotalCount());
+        assertEquals((Long)5L, httpSessionCartService.getTotalProductsQuantity());
 
         httpSessionCartService.remove(1000L);
-        assertEquals((Long)3L, httpSessionCartService.getTotalCount());
+        assertEquals((Long)3L, httpSessionCartService.getTotalProductsQuantity());
 
     }
 
     @Test(expected = OutOfStockException.class)
-    public void testOutOfStock() throws OutOfStockException, ItemNotFoundException {
-        httpSessionCartService.addPhone(1000L, 11L);
+    public void testOutOfStock() throws OutOfStockException {
+        httpSessionCartService.addPhone(1000L, 21L);
     }
 
     private Phone createPhone(Long phoneId, BigDecimal price) {

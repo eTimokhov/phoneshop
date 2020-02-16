@@ -35,9 +35,7 @@ public class ProductListPageController {
         boolean isSortDirectionValid = Arrays.stream(SortingDirection.values()).anyMatch(value -> value.name().equals(sortDirection.toUpperCase()));
         SortingDirection sortingDirection = isSortDirectionValid ? SortingDirection.valueOf(sortDirection.toUpperCase()) : SortingDirection.ASCENDING;
 
-        List<Phone> phones = productListPageService.findPage(searchTerms, orderBy, sortingDirection, page, RESULTS_PER_PAGE);
-        PaginationData paginationData = productListPageService.getPaginationData(searchTerms, RESULTS_PER_PAGE);
-        model.addAttribute("phones", phones);
+        PaginationData paginationData = productListPageService.getPaginationData(searchTerms, orderBy, sortingDirection, page, RESULTS_PER_PAGE);
         model.addAttribute("paginationData", paginationData);
         return "productList";
     }

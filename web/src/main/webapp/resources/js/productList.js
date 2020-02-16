@@ -1,4 +1,3 @@
-//NotNull Min typeMismatch OutOfStockException
 const errorMap = new Map([
     ["NotNull", "This field cannot be empty"],
     ["Min", "Value must be greater than 0"],
@@ -14,35 +13,43 @@ function addToCart(phoneId, quantity) {
             phoneId: phoneId,
             quantity: quantity
         },
-        success: addToCartCallback
+        success: () => {
+            clearErrorMessages();
+            getCartInfo();
+        },
+        error: response => {
+            addToCartErrorCallback(response.responseText, phoneId);
+        }
     })
 }
 
-function addToCartCallback(response) {
+function clearErrorMessages() {
     $(".error-message").text("");
-    if (response.success) {
-        getCartInfo();
-    } else {
-        let errorMessageSpanId = `#error-message-${response.phoneId}`;
-        let message = errorMap.get(response.errorCode);;
-        if (message === undefined) {
-            message = response.errorCode;
-        }
-        $(errorMessageSpanId).text(message);
+}
 
+function addToCartErrorCallback(errorCode, phoneId) {
+    let errorMessageSpanId = `#error-message-${phoneId}`;
+    let message = errorMap.get(errorCode);
+    if (message === undefined) {
+        message = errorCode;
     }
+    $(errorMessageSpanId).text(message);
 }
 
 function getCartInfo() {
     $.get(getCartInfoUrl, getCartInfoCallback)
 }
 
-function getCartInfoCallback(cartInfo) {
-    updateCart(cartInfo.totalCount, cartInfo.totalPrice)
+function getCartInfoCallback(cart) {
+    updateCart(cart)
 }
 
-function updateCart(totalCount, totalPrice) {
-    $("#cart").text(`Cart: ${totalCount} items, $${totalPrice}`)
+function updateCart(cart) {
+    let totalCount = 0;
+    for (let cartItem of cart.cartItems) {
+        totalCount += cartItem.quantity;
+    }
+    $("#cart").text(`Cart: ${totalCount} items, $${cart.totalPrice}`);
 }
 
 $(function () {

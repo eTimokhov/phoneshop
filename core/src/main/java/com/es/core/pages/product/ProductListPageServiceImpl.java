@@ -15,14 +15,9 @@ public class ProductListPageServiceImpl implements ProductListPageService {
     private PhoneDao phoneDao;
 
     @Override
-    public List<Phone> findPage(String searchTerms, String orderBy, SortingDirection sortingDirection, int page, int resultsPerPage) {
-        return phoneDao.findAll(searchTerms, orderBy, sortingDirection, (page - 1) * resultsPerPage, resultsPerPage);
-    }
-
-    @Override
-    public PaginationData getPaginationData(String searchTerms, int resultsPerPage) {
+    public PaginationData getPaginationData(String searchTerms, String orderBy, SortingDirection sortingDirection, int page, int resultsPerPage) {
+        List<Phone> phones = phoneDao.findAll(searchTerms, orderBy, sortingDirection, (page - 1) * resultsPerPage, resultsPerPage);
         int totalCount = phoneDao.findTotalCount(searchTerms);
-        return new PaginationData(totalCount, resultsPerPage);
-
+        return new PaginationData(phones, totalCount, resultsPerPage);
     }
 }

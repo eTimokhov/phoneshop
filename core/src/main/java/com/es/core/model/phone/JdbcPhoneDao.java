@@ -136,8 +136,8 @@ public class JdbcPhoneDao implements PhoneDao {
     private String getFindAllSqlQuery(String searchTerms, String orderBy, SortingDirection sortingDirection, int offset, int limit) {
         StringBuilder sqlQuery = new StringBuilder(buildQueryForSearch(searchTerms, "*"));
 
-        sqlQuery.append("ORDER BY ").append(orderBy);
-        sqlQuery.append(sortingDirection == SortingDirection.DESCENDING ? " DESC " : " ASC ");
+        sqlQuery.append("ORDER BY ").append(orderBy).append(" ");
+        sqlQuery.append(sortingDirection.getValue()).append(" ");
         sqlQuery.append("OFFSET ").append(offset).append(" LIMIT ").append(limit);
 
         return sqlQuery.toString();

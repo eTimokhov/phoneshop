@@ -1,15 +1,21 @@
 package com.es.core.pages.product;
 
+import com.es.core.model.phone.Phone;
+
+import java.util.List;
+
 public class PaginationData {
+    private List<Phone> phones;
     private int totalCount;
-    private int resultPerPage;
+    private int resultsPerPage;
 
     public PaginationData() {
     }
 
-    public PaginationData(int totalCount, int resultPerPage) {
+    public PaginationData(List<Phone> phones, int totalCount, int resultPerPage) {
+        this.phones = phones;
         this.totalCount = totalCount;
-        this.resultPerPage = resultPerPage;
+        this.resultsPerPage = resultPerPage;
     }
 
     public int getTotalCount() {
@@ -21,10 +27,19 @@ public class PaginationData {
     }
 
     public int getResultsPerPage() {
-        return resultPerPage;
+        return resultsPerPage;
     }
 
     public void setResultsPerPage(int resultsPerPage) {
-        this.resultPerPage = resultsPerPage;
+        this.resultsPerPage = resultsPerPage;
     }
+
+    public List<Phone> getPhones() {
+        return phones;
+    }
+
+    public void setPhones(List<Phone> phones) {
+        this.phones = phones;
+    }
+
 }

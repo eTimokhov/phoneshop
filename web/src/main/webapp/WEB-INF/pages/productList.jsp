@@ -51,7 +51,7 @@
             </tr>
             </thead>
             <tbody>
-            <c:forEach var="phone" items="${phones}">
+            <c:forEach var="phone" items="${paginationData.phones}">
                 <tr class="tr-fixed-height">
                     <td>
                         <img class="img-preview"
