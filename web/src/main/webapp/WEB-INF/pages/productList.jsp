@@ -30,21 +30,21 @@
             <tr>
                 <th>Image</th>
                 <th>Brand
-                    <tags:sortLink orderBy="brand" sortDirection="ascending"/>
-                    <tags:sortLink orderBy="brand" sortDirection="descending"/>
+                    <tags:sortLink orderBy="brand" sortDirection="ASCENDING"/>
+                    <tags:sortLink orderBy="brand" sortDirection="DESCENDING"/>
                 </th>
                 <th>Model
-                    <tags:sortLink orderBy="model" sortDirection="ascending"/>
-                    <tags:sortLink orderBy="model" sortDirection="descending"/>
+                    <tags:sortLink orderBy="model" sortDirection="ASCENDING"/>
+                    <tags:sortLink orderBy="model" sortDirection="DESCENDING"/>
                 </th>
                 <th>Color</th>
                 <th>Display size
-                    <tags:sortLink orderBy="displaySizeInches" sortDirection="ascending"/>
-                    <tags:sortLink orderBy="displaySizeInches" sortDirection="descending"/>
+                    <tags:sortLink orderBy="displaySizeInches" sortDirection="ASCENDING"/>
+                    <tags:sortLink orderBy="displaySizeInches" sortDirection="DESCENDING"/>
                 </th>
                 <th>Price
-                    <tags:sortLink orderBy="price" sortDirection="ascending"/>
-                    <tags:sortLink orderBy="price" sortDirection="descending"/>
+                    <tags:sortLink orderBy="price" sortDirection="ASCENDING"/>
+                    <tags:sortLink orderBy="price" sortDirection="DESCENDING"/>
                 </th>
                 <th>Quantity</th>
                 <th>Action</th>

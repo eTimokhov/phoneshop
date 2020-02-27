@@ -4,7 +4,7 @@ import com.es.core.IntegrationTest;
 import com.es.core.model.phone.Phone;
 import com.es.core.model.phone.PhoneDao;
 import com.es.core.model.stock.Stock;
-import com.es.core.model.stock.StockDao;
+import com.es.core.model.stock.StockService;
 import com.es.core.order.OutOfStockException;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,8 +29,8 @@ public class HttpSessionCartServiceTest extends IntegrationTest {
     @Mock
     private PhoneDao phoneDao;
 
-    @Mock
-    private StockDao stockDao;
+    @Spy
+    private StockService stockService;
 
     @InjectMocks
     @Resource
@@ -50,12 +50,12 @@ public class HttpSessionCartServiceTest extends IntegrationTest {
         Phone phone1 = createPhone(1000L, BigDecimal.valueOf(100.0));
         Stock stock1 = createStock(phone1, 20L, 10L);
         when(phoneDao.get(1000L)).thenReturn(Optional.of(phone1));
-        when(stockDao.getStock(1000L)).thenReturn(Optional.of(stock1));
+        when(stockService.getStock(1000L)).thenReturn(Optional.of(stock1));
 
         Phone phone2 = createPhone(1001L, BigDecimal.valueOf(250.0));
         Stock stock2 = createStock(phone2, 30L, 15L);
         when(phoneDao.get(1001L)).thenReturn(Optional.of(phone2));
-        when(stockDao.getStock(1001L)).thenReturn(Optional.of(stock2));
+        when(stockService.getStock(1001L)).thenReturn(Optional.of(stock2));
 
     }
 

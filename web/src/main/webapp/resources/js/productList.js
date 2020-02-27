@@ -2,7 +2,7 @@ const errorMap = new Map([
     ["NotNull", "This field cannot be empty"],
     ["Min", "Value must be greater than 0"],
     ["typeMismatch", "Enter a valid number"],
-    ["OutOfStockException", "Product is out of stock"]
+    ["outOfStock", "Product is out of stock"]
 ]);
 
 

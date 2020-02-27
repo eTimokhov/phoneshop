@@ -9,7 +9,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @Service
-public class ProductListPageServiceImpl implements ProductListPageService {
+public class ProductPageServiceImpl implements ProductPageService {
 
     @Resource
     private PhoneDao phoneDao;

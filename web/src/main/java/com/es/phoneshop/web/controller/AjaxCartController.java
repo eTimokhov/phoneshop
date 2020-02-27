@@ -27,20 +27,21 @@ public class AjaxCartController {
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<String> addPhone(@Valid AddToCartRequest request, BindingResult bindingResult) {
+    public ResponseEntity<String> addPhone(@Valid AddToCartRequest request, BindingResult bindingResult) throws OutOfStockException, ItemNotFoundException {
         if (bindingResult.hasErrors()) {
-            String errorMessage = bindingResult.getFieldErrors().stream()
-                        .findFirst()
-                        .map(FieldError::getCode)
-                        .orElse("Invalid request");
+            String errorMessage = getErrorMessage(bindingResult);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
         }
-        try {
-            cartService.addPhone(request.getPhoneId(), request.getQuantity());
-        } catch (OutOfStockException | ItemNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getClass().getSimpleName());
-        }
+        cartService.addPhone(request.getPhoneId(), request.getQuantity());
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+    private String getErrorMessage(BindingResult bindingResult) {
+        return bindingResult.getFieldErrors().stream()
+                .findFirst()
+                .map(FieldError::getCode)
+                .orElse("Invalid request");
     }
 
     @ResponseBody
