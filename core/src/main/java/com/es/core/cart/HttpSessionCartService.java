@@ -5,7 +5,9 @@ import com.es.core.model.phone.Phone;
 import com.es.core.model.phone.PhoneDao;
 import com.es.core.model.stock.StockService;
 import com.es.core.order.OutOfStockException;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Map;
@@ -14,6 +16,9 @@ import java.util.function.Predicate;
 
 @Service
 public class HttpSessionCartService implements CartService {
+
+    private static final Logger logger = Logger.getLogger(HttpSessionCartService.class);
+
     @Resource
     private Cart cart;
 
@@ -45,12 +50,13 @@ public class HttpSessionCartService implements CartService {
     }
 
     @Override
+    @Transactional
     public void update(Map<Long, Long> items) {
         for (Map.Entry<Long, Long> entry : items.entrySet()) {
             try {
                 updatePhoneInCart(entry.getKey(), entry.getValue());
             } catch (ItemNotFoundException | OutOfStockException e) {
-                e.printStackTrace();
+                logger.error(e);
             }
         }
         cartCalculationService.recalculateTotalPrice(cart);
@@ -63,16 +69,20 @@ public class HttpSessionCartService implements CartService {
     }
 
     private void addPhoneToCart(Long phoneId, Long quantity) throws OutOfStockException {
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than 0");
+        }
+
         Optional<CartItem> cartItemOpt = cart.getCartItems().stream()
                 .filter(cartItemMatchPredicate(phoneId))
                 .findAny();
-        if (quantity > 0) {
-            if (cartItemOpt.isPresent()) {
-                updateCartItem(cartItemOpt.get(), cartItemOpt.get().getQuantity() + quantity);
-            } else {
-                createCartItem(phoneId, quantity);
-            }
+
+        if (cartItemOpt.isPresent()) {
+            updateCartItem(cartItemOpt.get(), cartItemOpt.get().getQuantity() + quantity);
+        } else {
+            createCartItem(phoneId, quantity);
         }
+
     }
 
     private void updatePhoneInCart(Long phoneId, Long newQuantity) throws OutOfStockException {

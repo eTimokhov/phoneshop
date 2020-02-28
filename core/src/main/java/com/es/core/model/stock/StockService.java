@@ -8,6 +8,6 @@ public interface StockService {
     boolean isEnoughStock(Long phoneId, Long newQuantity);
     void assertStock(Long phoneId, Long newQuantity) throws OutOfStockException;
     Optional<Stock> getStock(Long phoneId);
-    void insert(Stock stock);
-    void update(Stock stock);
+    void addStock(Stock stock);
+    void updateStock(Stock stock);
 }

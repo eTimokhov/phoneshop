@@ -30,11 +30,11 @@ public class StockServiceImpl implements StockService {
         return stockDao.getStock(phoneId);
     }
 
-    public void insert(Stock stock) {
+    public void addStock(Stock stock) {
         stockDao.insert(stock);
     }
 
-    public void update(Stock stock) {
+    public void updateStock(Stock stock) {
         stockDao.update(stock);
     }
 }
