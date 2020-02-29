@@ -2,7 +2,7 @@ package com.es.core.cart;
 
 import com.es.core.model.ItemNotFoundException;
 import com.es.core.model.phone.Phone;
-import com.es.core.model.phone.PhoneDao;
+import com.es.core.model.phone.PhoneService;
 import com.es.core.model.stock.StockService;
 import com.es.core.order.OutOfStockException;
 import org.apache.log4j.Logger;
@@ -23,7 +23,7 @@ public class HttpSessionCartService implements CartService {
     private Cart cart;
 
     @Resource
-    private PhoneDao phoneDao;
+    private PhoneService phoneService;
 
     @Resource
     private StockService stockService;
@@ -95,12 +95,12 @@ public class HttpSessionCartService implements CartService {
         } else if (cartItemOpt.isPresent()) {
             updateCartItem(cartItemOpt.get(), newQuantity);
         } else {
-            createCartItem(phoneId, newQuantity);
+            throw new IllegalStateException("Lost update attempt");
         }
     }
 
     private void createCartItem(Long phoneId, Long newQuantity) throws OutOfStockException {
-        Phone phone = phoneDao.get(phoneId).orElseThrow(() -> new ItemNotFoundException("Phone with id " + phoneId + " not found."));
+        Phone phone = phoneService.getPhone(phoneId).orElseThrow(() -> new ItemNotFoundException("Phone with id " + phoneId + " not found."));
         stockService.assertStock(phoneId, newQuantity);
         cart.getCartItems().add(new CartItem(phone, newQuantity));
     }
