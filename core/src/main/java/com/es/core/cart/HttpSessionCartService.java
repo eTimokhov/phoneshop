@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -18,6 +19,8 @@ import java.util.function.Predicate;
 public class HttpSessionCartService implements CartService {
 
     private static final Logger logger = Logger.getLogger(HttpSessionCartService.class);
+    private static final String ERR_OUT_OF_STOCK = "outOfStock";
+    private static final String NOT_FOUND = "notFound";
 
     @Resource
     private Cart cart;
@@ -51,15 +54,22 @@ public class HttpSessionCartService implements CartService {
 
     @Override
     @Transactional
-    public void update(Map<Long, Long> items) {
-        for (Map.Entry<Long, Long> entry : items.entrySet()) {
+    public List<String> update(List<CartItem> items) {
+        List <String> errors = new ArrayList<>();
+        for (CartItem cartItem : items) {
             try {
-                updatePhoneInCart(entry.getKey(), entry.getValue());
-            } catch (ItemNotFoundException | OutOfStockException e) {
+                updatePhoneInCart(cartItem.getPhone().getId(), cartItem.getQuantity());
+                errors.add(null);
+            } catch (ItemNotFoundException e) {
                 logger.error(e);
+                errors.add(NOT_FOUND);
+            } catch (OutOfStockException e) {
+                logger.error(e);
+                errors.add(ERR_OUT_OF_STOCK);
             }
         }
         cartCalculationService.recalculateTotalPrice(cart);
+        return errors;
     }
 
     @Override

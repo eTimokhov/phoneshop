@@ -6,16 +6,15 @@
 
 <tags:template>
     <script type="text/javascript">
-        let addToCartUrl = '<c:url value="/ajaxCart"/>';
-        let getCartInfoUrl = '<c:url value="/ajaxCart"/>';
+        let ajaxCartUrl = '<c:url value="/ajaxCart"/>';
     </script>
-    <script src="<c:url value="/resources/js/productList.js"/>"></script>
+    <script src="<c:url value="/resources/js/script.js"/>"></script>
     <div class="container">
         <header class="clearfix">
             <h1>Phonify</h1>
             <div class="float-right">
                 <a href="#">Login</a>
-                <a href="#" id="cart" class="btn btn-outline-secondary">Cart</a>
+                <a href="<c:url value="/cart"/>" id="cart" class="btn btn-outline-secondary">Cart</a>
             </div>
         </header>
         <div class="row">
@@ -36,14 +35,6 @@
                     <div class="col">
                         <div class="row">
                             <b>Price: </b>$${empty phone.price ? "-" : phone.price}
-<%--                            <c:choose>--%>
-<%--                                <c:when test = "${empty phone.price}">--%>
-<%--                                    ---%>
-<%--                                </c:when>--%>
-<%--                                <c:otherwise>--%>
-<%--                                    $<fmt:formatNumber value="${phone.price}" minFractionDigits="0"/>--%>
-<%--                                </c:otherwise>--%>
-<%--                            </c:choose>--%>
                         </div>
                         <div class="row">
                             <input class="form-control" type="text" id="quantity-input" value="1">
@@ -123,14 +114,6 @@
                                     <td>Back</td>
                                     <td>${phone.backCameraMegapixels} megapixels</td>
                                 </tr>
-<%--                                <tr>--%>
-<%--                                    <td>Color</td>--%>
-<%--                                    <td>${phone.colors}</td>--%>
-<%--                                </tr>--%>
-<%--                                <tr>--%>
-<%--                                    <td>Weight</td>--%>
-<%--                                    <td>${phone.weightGr}</td>--%>
-<%--                                </tr>--%>
                                 </tbody>
                             </table>
                         </div>
@@ -163,15 +146,16 @@
                             <h5>Other</h5>
                             <table class="table table-sm">
                                 <tbody>
-                                <tr>
-                                    <td>Colors</td>
-<%--                                    <td>${phone.colors} mm</td>--%>
-                                    <td>
-                                        <c:forEach var="color" items="${phone.colors}">
-                                            ${color.code}
-                                        </c:forEach>
-                                    </td>
-                                </tr>
+                                <c:if test="${not empty phone.colors}">
+                                    <tr>
+                                        <td>Colors</td>
+                                        <td>
+                                            <c:forEach var="color" items="${phone.colors}">
+                                                ${color.code}
+                                            </c:forEach>
+                                        </td>
+                                    </tr>
+                                </c:if>
                                 <tr>
                                     <td>Device type</td>
                                     <td>${phone.deviceType}</td>
