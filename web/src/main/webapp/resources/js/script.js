@@ -7,7 +7,7 @@ const errorMap = new Map([
 
 
 function addToCart(phoneId, quantity) {
-    $.ajax(addToCartUrl, {
+    $.ajax(ajaxCartUrl, {
         type: 'POST',
         data: {
             phoneId: phoneId,
@@ -37,7 +37,7 @@ function addToCartErrorCallback(errorCode, phoneId) {
 }
 
 function getCartInfo() {
-    $.get(getCartInfoUrl, getCartInfoCallback)
+    $.get(ajaxCartUrl, getCartInfoCallback)
 }
 
 function getCartInfoCallback(cart) {

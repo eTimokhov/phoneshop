@@ -4,16 +4,15 @@
 
 <tags:template>
     <script type="text/javascript">
-        let addToCartUrl = '<c:url value="/ajaxCart"/>';
-        let getCartInfoUrl = '<c:url value="/ajaxCart"/>';
+        let ajaxCartUrl = '<c:url value="/ajaxCart"/>';
     </script>
-    <script src="<c:url value="/resources/js/productList.js"/>"></script>
+    <script src="<c:url value="/resources/js/script.js"/>"></script>
     <div class="container">
         <header class="clearfix">
             <h1>Phonify</h1>
             <div class="float-right">
                 <a href="#">Login</a>
-                <a href="#" id="cart" class="btn btn-outline-secondary">Cart</a>
+                <a href="<c:url value="/cart"/>" id="cart" class="btn btn-outline-secondary">Cart</a>
             </div>
         </header>
         <hr>
@@ -58,7 +57,7 @@
                              src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${phone.imageUrl}">
                     </td>
                     <td>${phone.brand}</td>
-                    <td>${phone.model}</td>
+                    <td><a href="<c:url value="/productDetails/"/>${phone.id}">${phone.model}</a></td>
                     <td>
                         <c:forEach var="color" items="${phone.colors}" varStatus="loop">
                             ${color.code}

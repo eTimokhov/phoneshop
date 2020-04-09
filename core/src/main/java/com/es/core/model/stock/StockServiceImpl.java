@@ -1,6 +1,5 @@
 package com.es.core.model.stock;
 
-import com.es.core.model.ItemNotFoundException;
 import com.es.core.order.OutOfStockException;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +14,8 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public boolean isEnoughStock(Long phoneId, Long newQuantity) {
-        Stock stock = stockDao.getStock(phoneId).orElseThrow(() -> new ItemNotFoundException("Stock with id " + phoneId + " not found."));
-        return stock.getStock() >= newQuantity;
+        return stockDao.getStock(phoneId).map(stock -> stock.getStock() >= newQuantity).orElse(false);
+
     }
 
     @Override
@@ -26,14 +25,17 @@ public class StockServiceImpl implements StockService {
         }
     }
 
+    @Override
     public Optional<Stock> getStock(Long phoneId) {
         return stockDao.getStock(phoneId);
     }
 
+    @Override
     public void addStock(Stock stock) {
         stockDao.insert(stock);
     }
 
+    @Override
     public void updateStock(Stock stock) {
         stockDao.update(stock);
     }

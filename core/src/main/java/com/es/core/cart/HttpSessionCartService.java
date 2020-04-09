@@ -2,7 +2,7 @@ package com.es.core.cart;
 
 import com.es.core.model.ItemNotFoundException;
 import com.es.core.model.phone.Phone;
-import com.es.core.model.phone.PhoneDao;
+import com.es.core.model.phone.PhoneService;
 import com.es.core.model.stock.StockService;
 import com.es.core.order.OutOfStockException;
 import org.apache.log4j.Logger;
@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -18,12 +19,14 @@ import java.util.function.Predicate;
 public class HttpSessionCartService implements CartService {
 
     private static final Logger logger = Logger.getLogger(HttpSessionCartService.class);
+    private static final String ERR_OUT_OF_STOCK = "outOfStock";
+    private static final String NOT_FOUND = "notFound";
 
     @Resource
     private Cart cart;
 
     @Resource
-    private PhoneDao phoneDao;
+    private PhoneService phoneService;
 
     @Resource
     private StockService stockService;
@@ -50,15 +53,8 @@ public class HttpSessionCartService implements CartService {
     }
 
     @Override
-    @Transactional
-    public void update(Map<Long, Long> items) {
-        for (Map.Entry<Long, Long> entry : items.entrySet()) {
-            try {
-                updatePhoneInCart(entry.getKey(), entry.getValue());
-            } catch (ItemNotFoundException | OutOfStockException e) {
-                logger.error(e);
-            }
-        }
+    public void update(CartItem cartItem) throws OutOfStockException {
+        updatePhoneInCart(cartItem.getPhone().getId(), cartItem.getQuantity());
         cartCalculationService.recalculateTotalPrice(cart);
     }
 
@@ -95,12 +91,12 @@ public class HttpSessionCartService implements CartService {
         } else if (cartItemOpt.isPresent()) {
             updateCartItem(cartItemOpt.get(), newQuantity);
         } else {
-            createCartItem(phoneId, newQuantity);
+            throw new IllegalStateException("Lost update attempt");
         }
     }
 
     private void createCartItem(Long phoneId, Long newQuantity) throws OutOfStockException {
-        Phone phone = phoneDao.get(phoneId).orElseThrow(() -> new ItemNotFoundException("Phone with id " + phoneId + " not found."));
+        Phone phone = phoneService.getPhone(phoneId).orElseThrow(() -> new ItemNotFoundException("Phone with id " + phoneId + " not found."));
         stockService.assertStock(phoneId, newQuantity);
         cart.getCartItems().add(new CartItem(phone, newQuantity));
     }
