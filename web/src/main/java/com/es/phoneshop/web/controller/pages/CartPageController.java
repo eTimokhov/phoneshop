@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @ControllerAdvice
@@ -29,9 +28,7 @@ public class CartPageController {
     @ModelAttribute("cartItemsWrapper")
     public CartItemInfoListWrapper addCartItemInfos() {
         CartItemInfoListWrapper listWrapper = new CartItemInfoListWrapper();
-        listWrapper.setItems(cartService.getCart().getCartItems().stream()
-                .map(CartItem::new)
-                .collect(Collectors.toList()));
+        listWrapper.setItems(cartService.getCart().getCartItems());
         return listWrapper;
     }
 

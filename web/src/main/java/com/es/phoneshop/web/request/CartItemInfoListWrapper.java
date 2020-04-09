@@ -4,6 +4,7 @@ import com.es.core.cart.CartItem;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CartItemInfoListWrapper {
     @Valid
@@ -14,7 +15,9 @@ public class CartItemInfoListWrapper {
     }
 
     public void setItems(List<CartItem> items) {
-        this.items = items;
+        this.items = items.stream()
+                .map(CartItem::new)
+                .collect(Collectors.toList());
     }
 
     @Override
