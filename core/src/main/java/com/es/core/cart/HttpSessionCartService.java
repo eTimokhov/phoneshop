@@ -53,23 +53,9 @@ public class HttpSessionCartService implements CartService {
     }
 
     @Override
-    @Transactional
-    public List<String> update(List<CartItem> items) {
-        List <String> errors = new ArrayList<>();
-        for (CartItem cartItem : items) {
-            try {
-                updatePhoneInCart(cartItem.getPhone().getId(), cartItem.getQuantity());
-                errors.add(null);
-            } catch (ItemNotFoundException e) {
-                logger.error(e);
-                errors.add(NOT_FOUND);
-            } catch (OutOfStockException e) {
-                logger.error(e);
-                errors.add(ERR_OUT_OF_STOCK);
-            }
-        }
+    public void update(CartItem cartItem) throws OutOfStockException {
+        updatePhoneInCart(cartItem.getPhone().getId(), cartItem.getQuantity());
         cartCalculationService.recalculateTotalPrice(cart);
-        return errors;
     }
 
     @Override

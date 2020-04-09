@@ -7,10 +7,4 @@ public interface PhoneService {
     Optional<Phone> getPhone(Long key);
 
     void savePhone(Phone phone);
-
-    List<Phone> findAll(int offset, int limit);
-
-    List<Phone> findAll(String searchTerms, String orderBy, SortingDirection sortingDirection, int offset, int limit);
-
-    int findTotalCount(String searchTerms);
 }

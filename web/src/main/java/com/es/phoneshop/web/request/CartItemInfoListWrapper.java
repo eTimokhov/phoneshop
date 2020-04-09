@@ -1,19 +1,19 @@
 package com.es.phoneshop.web.request;
 
-import com.es.core.cart.CartItemInfo;
+import com.es.core.cart.CartItem;
 
 import javax.validation.Valid;
 import java.util.List;
 
 public class CartItemInfoListWrapper {
     @Valid
-    private List<CartItemInfo> items;
+    private List<CartItem> items;
 
-    public List<CartItemInfo> getItems() {
+    public List<CartItem> getItems() {
         return items;
     }
 
-    public void setItems(List<CartItemInfo> items) {
+    public void setItems(List<CartItem> items) {
         this.items = items;
     }
 

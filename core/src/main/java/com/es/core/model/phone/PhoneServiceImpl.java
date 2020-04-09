@@ -22,18 +22,4 @@ public class PhoneServiceImpl implements PhoneService {
         phoneDao.save(phone);
     }
 
-    @Override
-    public List<Phone> findAll(int offset, int limit) {
-        return phoneDao.findAll(offset, limit);
-    }
-
-    @Override
-    public List<Phone> findAll(String searchTerms, String orderBy, SortingDirection sortingDirection, int offset, int limit) {
-        return phoneDao.findAll(searchTerms, orderBy, sortingDirection, offset, limit);
-    }
-
-    @Override
-    public int findTotalCount(String searchTerms) {
-        return phoneDao.findTotalCount(searchTerms);
-    }
 }

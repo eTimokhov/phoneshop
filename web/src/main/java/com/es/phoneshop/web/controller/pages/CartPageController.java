@@ -2,8 +2,8 @@ package com.es.phoneshop.web.controller.pages;
 
 import com.es.core.cart.Cart;
 import com.es.core.cart.CartItem;
-import com.es.core.cart.CartItemInfo;
 import com.es.core.cart.CartService;
+import com.es.core.order.OutOfStockException;
 import com.es.phoneshop.web.request.CartItemInfoListWrapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,16 +22,16 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 @RequestMapping(value = "/cart")
 public class CartPageController {
+    private static final String OUT_OF_STOCK = "outOfStock";
     @Resource
     private CartService cartService;
 
-    @ModelAttribute("cartItemInfos")
+    @ModelAttribute("cartItemsWrapper")
     public CartItemInfoListWrapper addCartItemInfos() {
-        List<CartItemInfo> cartItemInfos = cartService.getCart().getCartItems().stream()
-                .map(ci -> new CartItemInfo(ci.getPhone(), ci.getQuantity().toString()))
-                .collect(Collectors.toList());
         CartItemInfoListWrapper listWrapper = new CartItemInfoListWrapper();
-        listWrapper.setItems(cartItemInfos);
+        listWrapper.setItems(cartService.getCart().getCartItems().stream()
+                .map(CartItem::new)
+                .collect(Collectors.toList()));
         return listWrapper;
     }
 
@@ -42,27 +42,24 @@ public class CartPageController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public void updateCart(@Valid @ModelAttribute("cartItemInfos") CartItemInfoListWrapper cartItemInfos, BindingResult bindingResult, Model model) {
+    public void updateCart(@Valid @ModelAttribute("cartItemsWrapper") CartItemInfoListWrapper cartItemsWrapper, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
             return;
         }
-        List<CartItem> cartItems = cartItemInfos.getItems().stream()
-                .map(cii -> new CartItem(cii.getPhone(), Long.parseLong(cii.getQty())))
-                .collect(Collectors.toList());
-
-        List<String> errors = cartService.update(cartItems);
-        for (int i = 0; i < errors.size(); i++) {
-            if (errors.get(i) != null) {
-                bindingResult.rejectValue("items[" + i + "].qty", errors.get(i));
+        List<CartItem> items = cartItemsWrapper.getItems();
+        for (int i = 0; i < items.size(); i++) {
+            try {
+                cartService.update(items.get(i));
+            } catch (OutOfStockException e) {
+                bindingResult.rejectValue("items[" + i + "].quantity", OUT_OF_STOCK);
             }
         }
-
-        updateCartItemInfos(cartItemInfos);
+        updateCartItemsModel(cartItemsWrapper);
     }
 
-    private void updateCartItemInfos(@ModelAttribute("cartItemInfos") @Valid CartItemInfoListWrapper cartItemInfos) {
+    private void updateCartItemsModel(CartItemInfoListWrapper cartItemsWrapper) {
         Cart cart = cartService.getCart();
-        cartItemInfos.getItems()
+        cartItemsWrapper.getItems()
                 .removeIf(cii -> cart.getCartItems().stream()
                         .noneMatch(ci -> ci.getPhone().equals(cii.getPhone())));
     }

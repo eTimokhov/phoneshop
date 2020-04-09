@@ -38,8 +38,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <spring:form modelAttribute="cartItemInfos" id="updateCart" method="PUT">
-                        <c:forEach var="cartItem" items="${cartItemInfos.items}" varStatus="status">
+                    <spring:form modelAttribute="cartItemsWrapper" id="updateCart" method="PUT">
+                        <c:forEach var="cartItem" items="${cartItemsWrapper.items}" varStatus="status">
                             <tr id="${cartItem.phone.id}">
                                 <td>${cartItem.phone.brand}</td>
                                 <td>${cartItem.phone.model}</td>
@@ -51,8 +51,8 @@
                                 <td>${cartItem.phone.displaySizeInches}&quot;</td>
                                 <td>$${cartItem.phone.price}</td>
                                 <td>
-                                    <spring:input id="qty-${cartItem.phone.id}" path="items[${status.index}].qty" type="text"/>
-                                    <spring:errors path="items[${status.index}].qty" cssClass="error"/>
+                                    <spring:input id="qty-${cartItem.phone.id}" path="items[${status.index}].quantity" type="text"/>
+                                    <spring:errors path="items[${status.index}].quantity" cssClass="error"/>
                                 </td>
                                 <td>
 <%--                                    <button class="btn btn-danger" type="button" onclick="deleteFromCart(${cartItem.phone.id})">Delete--%>

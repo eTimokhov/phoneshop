@@ -2,8 +2,6 @@ package com.es.core.cart;
 
 import com.es.core.order.OutOfStockException;
 
-import java.util.List;
-
 public interface CartService {
 
     Cart getCart();
@@ -12,10 +10,7 @@ public interface CartService {
 
     void addPhone(Long phoneId, Long quantity) throws OutOfStockException;
 
-    /**
-     * @return errors
-     */
-    List<String> update(List<CartItem> items);
+    void update(CartItem cartItem) throws OutOfStockException;
 
     void remove(Long phoneId) throws OutOfStockException;
 }
