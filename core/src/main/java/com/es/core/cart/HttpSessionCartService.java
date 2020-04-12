@@ -7,11 +7,8 @@ import com.es.core.model.stock.StockService;
 import com.es.core.order.OutOfStockException;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -62,6 +59,22 @@ public class HttpSessionCartService implements CartService {
     public void remove(Long phoneId) throws OutOfStockException {
         updatePhoneInCart(phoneId, 0L);
         cartCalculationService.recalculateTotalPrice(cart);
+    }
+
+    @Override
+    public void clearCart() {
+        getCart().getCartItems().clear();
+        cartCalculationService.recalculateTotalPrice(cart);
+    }
+
+    @Override
+    public boolean removeOutOfStockCartItems() {
+        int oldItemsCount = getCart().getCartItems().size();
+        getCart().getCartItems().removeIf(
+                ci -> stockService.isNotEnoughStock(ci.getPhone().getId(), ci.getQuantity())
+        );
+        cartCalculationService.recalculateTotalPrice(cart);
+        return oldItemsCount != getCart().getCartItems().size();
     }
 
     private void addPhoneToCart(Long phoneId, Long quantity) throws OutOfStockException {

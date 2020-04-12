@@ -13,14 +13,14 @@ public class StockServiceImpl implements StockService {
     private StockDao stockDao;
 
     @Override
-    public boolean isEnoughStock(Long phoneId, Long newQuantity) {
-        return stockDao.getStock(phoneId).map(stock -> stock.getStock() >= newQuantity).orElse(false);
+    public boolean isNotEnoughStock(Long phoneId, Long newQuantity) {
+        return stockDao.getStock(phoneId).map(stock -> stock.getStock() < newQuantity).orElse(true);
 
     }
 
     @Override
     public void assertStock(Long phoneId, Long newQuantity) throws OutOfStockException {
-        if (!isEnoughStock(phoneId, newQuantity)) {
+        if (isNotEnoughStock(phoneId, newQuantity)) {
             throw new OutOfStockException();
         }
     }
@@ -38,5 +38,12 @@ public class StockServiceImpl implements StockService {
     @Override
     public void updateStock(Stock stock) {
         stockDao.update(stock);
+    }
+
+    @Override
+    public void decreaseStock(Long phoneId, Long quantity) {
+        Stock stock = getStock(phoneId).orElseThrow(IllegalArgumentException::new);
+        stock.setStock(stock.getStock() - quantity);
+        updateStock(stock);
     }
 }

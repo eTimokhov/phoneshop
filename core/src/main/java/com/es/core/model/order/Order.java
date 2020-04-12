@@ -1,6 +1,9 @@
 package com.es.core.model.order;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 public class Order
@@ -17,12 +20,20 @@ public class Order
      */
     private BigDecimal totalPrice;
 
+    @NotBlank
     private String firstName;
+    @NotBlank
     private String lastName;
+    @NotBlank
     private String deliveryAddress;
+    @NotBlank
     private String contactPhoneNo;
 
+    private String additionalInfo;
+
     private OrderStatus status;
+
+    private Date placementDate;
 
     public Long getId() {
         return id;
@@ -94,6 +105,22 @@ public class Order
 
     public void setContactPhoneNo(String contactPhoneNo) {
         this.contactPhoneNo = contactPhoneNo;
+    }
+
+    public String getAdditionalInfo() {
+        return additionalInfo;
+    }
+
+    public void setAdditionalInfo(String additionalInfo) {
+        this.additionalInfo = additionalInfo;
+    }
+
+    public Date getPlacementDate() {
+        return placementDate;
+    }
+
+    public void setPlacementDate(Date placementDate) {
+        this.placementDate = placementDate;
     }
 
     public OrderStatus getStatus() {
