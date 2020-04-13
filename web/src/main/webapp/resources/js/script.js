@@ -49,7 +49,7 @@ function updateCart(cart) {
     for (let cartItem of cart.cartItems) {
         totalCount += cartItem.quantity;
     }
-    $("#cart").text(`Cart: ${totalCount} items, $${cart.totalPrice}`);
+    $("#cart").text(`Cart: ${totalCount} items, $${cart.subtotal}`);
 }
 
 $(function () {

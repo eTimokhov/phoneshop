@@ -15,73 +15,73 @@
         <div class="row">
             <a href="<c:url value="/cart"/>" class="btn btn-outline-secondary">Back to cart</a>
         </div>
-        <c:if test="${not empty warningMessage}">
-            <div class="alert alert-warning" role="alert">
-                ${warningMessage}
-            </div>
-        </c:if>
-
         <div class="row">
-            <spring:form modelAttribute="currentOrder" method="POST">
-                <div class="row">
-                    <div class="col">
+            <c:if test="${not empty warningMessage}">
+                <div class="alert alert-warning" role="alert">
+                        ${warningMessage}
+                </div>
+            </c:if>
+        </div>
+            <div class="row">
 
-                        <table id="orderItems" class="table table-bordered table-striped">
-                            <thead>
-                            <tr>
-                                <th>Brand</th>
-                                <th>Model</th>
-                                <th>Color</th>
-                                <th>Display size</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <c:forEach var="orderItem" items="${currentOrder.orderItems}" varStatus="status">
-                                <tr>
-                                    <td>${orderItem.phone.brand}</td>
-                                    <td>${orderItem.phone.model}</td>
-                                    <td>
-                                        <c:forEach var="color" items="${orderItem.phone.colors}">
-                                            ${color.code}
-                                        </c:forEach>
-                                    </td>
-                                    <td>${orderItem.phone.displaySizeInches}&quot;</td>
-                                    <td>${orderItem.quantity}</td>
-                                    <td>$${orderItem.phone.price}</td>
-                                </tr>
-                            </c:forEach>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>Subtotal</td>
-                                <td>$${currentOrder.subtotal}</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>Delivery</td>
-                                <td>$${currentOrder.deliveryPrice}</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>Total</td>
-                                <td>$${currentOrder.totalPrice}</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                <div class="col">
 
-                    </div>
-                    <div class="col">
+                    <table id="orderItems" class="table table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <th>Brand</th>
+                            <th>Model</th>
+                            <th>Color</th>
+                            <th>Display size</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <c:forEach var="cartItem" items="${cart.cartItems}" varStatus="status">
+                            <tr>
+                                <td>${cartItem.phone.brand}</td>
+                                <td>${cartItem.phone.model}</td>
+                                <td>
+                                    <c:forEach var="color" items="${cartItem.phone.colors}">
+                                        ${color.code}
+                                    </c:forEach>
+                                </td>
+                                <td>${cartItem.phone.displaySizeInches}&quot;</td>
+                                <td>${cartItem.quantity}</td>
+                                <td>$${cartItem.phone.price}</td>
+                            </tr>
+                        </c:forEach>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>Subtotal</td>
+                            <td>$${cart.subtotal}</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>Delivery</td>
+                            <td>$${cart.deliveryPrice}</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>Total</td>
+                            <td>$${cart.totalPrice}</td>
+                        </tr>
+                        </tbody>
+                    </table>
 
+                </div>
+                <div class="col">
+                    <spring:form modelAttribute="orderForm" method="POST">
                         <div class="form-group">
                             <label for="firstName">First name</label>
                             <spring:input type="text" class="form-control" id="firstName" path="firstName"/>
@@ -94,12 +94,14 @@
                         </div>
                         <div class="form-group">
                             <label for="deliveryAddress">Address</label>
-                            <spring:input type="text" class="form-control" id="deliveryAddress" path="deliveryAddress"/>
+                            <spring:input type="text" class="form-control" id="deliveryAddress"
+                                          path="deliveryAddress"/>
                             <spring:errors path="firstName" cssClass="error"/>
                         </div>
                         <div class="form-group">
                             <label for="contactPhoneNo">Phone</label>
-                            <spring:input type="text" class="form-control" id="contactPhoneNo" path="contactPhoneNo"/>
+                            <spring:input type="text" class="form-control" id="contactPhoneNo"
+                                          path="contactPhoneNo"/>
                             <spring:errors path="firstName" cssClass="error"/>
                         </div>
                         <div class="form-group">
@@ -107,10 +109,9 @@
                             <spring:textarea class="form-control" id="additionalInfo" path="additionalInfo"/>
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
+                    </spring:form>
                 </div>
-            </spring:form>
-        </div>
+            </div>
     </div>
 
 </tags:template>

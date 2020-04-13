@@ -9,10 +9,11 @@ public class CartCalculationServiceImpl implements CartCalculationService {
 
     @Override
     public void recalculateTotalPrice(Cart cart) {
-        BigDecimal totalPrice = cart.getCartItems().stream()
+        BigDecimal subtotal = cart.getCartItems().stream()
                 .map(ci -> ci.getPhone().getPrice().multiply(BigDecimal.valueOf(ci.getQuantity())))
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
-        cart.setTotalPrice(totalPrice);
+        cart.setSubtotal(subtotal);
+        cart.setTotalPrice(subtotal.add(cart.getDeliveryPrice()));
     }
 }

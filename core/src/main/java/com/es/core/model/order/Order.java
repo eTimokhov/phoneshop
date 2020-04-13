@@ -1,7 +1,5 @@
 package com.es.core.model.order;
 
-import org.hibernate.validator.constraints.NotBlank;
-
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -20,15 +18,10 @@ public class Order
      */
     private BigDecimal totalPrice;
 
-    @NotBlank
     private String firstName;
-    @NotBlank
     private String lastName;
-    @NotBlank
     private String deliveryAddress;
-    @NotBlank
     private String contactPhoneNo;
-
     private String additionalInfo;
 
     private OrderStatus status;
