@@ -5,9 +5,10 @@ import com.es.core.order.OutOfStockException;
 import java.util.Optional;
 
 public interface StockService {
-    boolean isEnoughStock(Long phoneId, Long newQuantity);
+    boolean isNotEnoughStock(Long phoneId, Long newQuantity);
     void assertStock(Long phoneId, Long newQuantity) throws OutOfStockException;
     Optional<Stock> getStock(Long phoneId);
     void addStock(Stock stock);
     void updateStock(Stock stock);
+    void decreaseStock(Long phoneId, Long quantity);
 }

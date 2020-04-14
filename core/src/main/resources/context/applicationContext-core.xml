@@ -37,6 +37,10 @@
         <constructor-arg value="com.es.core.model.stock.Stock" />
     </bean>
 
+    <bean id="orderBeanPropertyRowMapper" class="org.springframework.jdbc.core.BeanPropertyRowMapper">
+        <constructor-arg value="com.es.core.model.order.Order" />
+    </bean>
+
     <jdbc:initialize-database enabled="${db.insertSchema}" data-source="dataSource">
         <jdbc:script location="classpath:db/schema.sql"/>
     </jdbc:initialize-database>
