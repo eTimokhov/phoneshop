@@ -1,7 +1,5 @@
 package com.es.phoneshop.web.controller.pages.admin;
 
-import com.es.core.model.ItemNotFoundException;
-import com.es.core.model.order.Order;
 import com.es.core.model.order.OrderStatus;
 import com.es.core.order.OrderService;
 import org.springframework.stereotype.Controller;
@@ -28,15 +26,13 @@ public class OrdersPageController {
 
     @RequestMapping(path = "/{orderId}", method = RequestMethod.GET)
     public String getOrder(@PathVariable Long orderId, Model model) {
-        model.addAttribute("order", orderService.get(orderId).orElseThrow(ItemNotFoundException::new));
+        model.addAttribute("order", orderService.get(orderId));
         return "admin/orderInfo";
     }
 
     @RequestMapping(path = "/{orderId}", method = RequestMethod.POST)
     public String updateOrderStatus(@RequestParam Long orderId, @RequestParam OrderStatus orderStatus) {
-        Order order = orderService.get(orderId).orElseThrow(ItemNotFoundException::new);
-        order.setStatus(orderStatus);
-        orderService.updateOrder(order);
+        orderService.updateOrderStatus(orderId, orderStatus);
         return "redirect:/admin/orders/" + orderId;
     }
 }
