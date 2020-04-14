@@ -2,6 +2,7 @@ package com.es.core.order;
 
 import com.es.core.cart.CartItem;
 import com.es.core.cart.CartService;
+import com.es.core.model.ItemNotFoundException;
 import com.es.core.model.order.Order;
 import com.es.core.model.order.OrderDao;
 import com.es.core.model.order.OrderForm;
@@ -14,7 +15,6 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,8 +30,13 @@ public class OrderServiceImpl implements OrderService {
     StockService stockService;
 
     @Override
-    public Optional<Order> get(Long orderId) {
-        return orderDao.get(orderId);
+    public List<Order> getOrders() {
+        return orderDao.getOrders();
+    }
+
+    @Override
+    public Order get(Long orderId) {
+        return orderDao.get(orderId).orElseThrow(ItemNotFoundException::new);
     }
 
     @Override
@@ -48,6 +53,18 @@ public class OrderServiceImpl implements OrderService {
 
         updateOrderItems(order);
         return order;
+    }
+
+    @Override
+    public void updateOrder(Order order) {
+        orderDao.save(order);
+    }
+
+    @Override
+    public void updateOrderStatus(Long orderId, OrderStatus orderStatus) {
+        Order order = get(orderId);
+        order.setStatus(orderStatus);
+        updateOrder(order);
     }
 
     private boolean canCreateOrder() {

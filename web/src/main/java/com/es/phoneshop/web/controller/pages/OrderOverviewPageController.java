@@ -1,6 +1,5 @@
 package com.es.phoneshop.web.controller.pages;
 
-import com.es.core.model.ItemNotFoundException;
 import com.es.core.order.OrderService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +18,7 @@ public class OrderOverviewPageController {
 
     @RequestMapping(value = "/{orderId}", method = RequestMethod.GET)
     public String get(@PathVariable Long orderId, Model model) {
-        model.addAttribute("order", orderService.get(orderId).orElseThrow(ItemNotFoundException::new));
+        model.addAttribute("order", orderService.get(orderId));
         return "orderOverview";
     }
 }
