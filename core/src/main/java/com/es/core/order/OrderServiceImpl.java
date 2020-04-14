@@ -4,6 +4,7 @@ import com.es.core.cart.CartItem;
 import com.es.core.cart.CartService;
 import com.es.core.model.order.Order;
 import com.es.core.model.order.OrderDao;
+import com.es.core.model.order.OrderForm;
 import com.es.core.model.order.OrderItem;
 import com.es.core.model.order.OrderStatus;
 import com.es.core.model.stock.StockService;
@@ -34,12 +35,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order createOrder() {
+    public Order createOrder(OrderForm orderForm) {
         if (!canCreateOrder()) {
             throw new IllegalStateException("Cannot create order.");
         }
-
         Order order = new Order();
+        order.setFirstName(orderForm.getFirstName());
+        order.setLastName(orderForm.getLastName());
+        order.setDeliveryAddress(orderForm.getDeliveryAddress());
+        order.setContactPhoneNo(orderForm.getContactPhoneNo());
+        order.setAdditionalInfo(order.getAdditionalInfo());
+
         updateOrderItems(order);
         return order;
     }

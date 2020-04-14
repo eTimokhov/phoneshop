@@ -1,4 +1,4 @@
-package com.es.phoneshop.web.request;
+package com.es.core.model.order;
 
 import org.hibernate.validator.constraints.NotBlank;
 

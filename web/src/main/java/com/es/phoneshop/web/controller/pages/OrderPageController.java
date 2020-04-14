@@ -3,9 +3,9 @@ package com.es.phoneshop.web.controller.pages;
 import com.es.core.cart.Cart;
 import com.es.core.cart.CartService;
 import com.es.core.model.order.Order;
+import com.es.core.model.order.OrderForm;
 import com.es.core.order.OrderService;
 import com.es.core.order.OutOfStockException;
-import com.es.phoneshop.web.request.OrderForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -44,13 +44,7 @@ public class OrderPageController {
         if (bindingResult.hasErrors()) {
             return "order";
         }
-        Order order = orderService.createOrder();
-        order.setFirstName(orderForm.getFirstName());
-        order.setLastName(orderForm.getLastName());
-        order.setDeliveryAddress(orderForm.getDeliveryAddress());
-        order.setContactPhoneNo(orderForm.getContactPhoneNo());
-        order.setAdditionalInfo(order.getAdditionalInfo());
-
+        Order order = orderService.createOrder(orderForm);
         try {
             orderService.placeOrder(order);
             cartService.clearCart();
