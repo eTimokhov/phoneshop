@@ -30,6 +30,11 @@ public class OrderServiceImpl implements OrderService {
     StockService stockService;
 
     @Override
+    public List<Order> getOrders() {
+        return orderDao.getOrders();
+    }
+
+    @Override
     public Optional<Order> get(Long orderId) {
         return orderDao.get(orderId);
     }
@@ -48,6 +53,11 @@ public class OrderServiceImpl implements OrderService {
 
         updateOrderItems(order);
         return order;
+    }
+
+    @Override
+    public void updateOrder(Order order) {
+        orderDao.save(order);
     }
 
     private boolean canCreateOrder() {

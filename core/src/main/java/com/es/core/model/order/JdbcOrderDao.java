@@ -36,6 +36,9 @@ public class JdbcOrderDao implements OrderDao {
     private static final String SAVE_ORDER_ITEM =
             "INSERT INTO orderItems (orderId, phoneId, quantity) VALUES (?, ?, ?)";
 
+    private static final String FIND_ORDERS =
+            "SELECT * FROM orders";
+
     @Resource
     private JdbcTemplate jdbcTemplate;
     @Resource
@@ -51,6 +54,13 @@ public class JdbcOrderDao implements OrderDao {
         insertOrder = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("orders")
                 .usingGeneratedKeyColumns("id");
+    }
+
+    @Override
+    public List<Order> getOrders() {
+        List<Order> orders = jdbcTemplate.query(FIND_ORDERS, orderBeanPropertyRowMapper);
+        orders.forEach(o -> o.setOrderItems(findOrderItems(o)));
+        return orders;
     }
 
     @Override
@@ -96,7 +106,7 @@ public class JdbcOrderDao implements OrderDao {
         jdbcTemplate.update(UPDATE_ORDER,
                 order.getFirstName(), order.getLastName(), order.getDeliveryAddress(),
                 order.getContactPhoneNo(), order.getAdditionalInfo(), order.getDeliveryPrice(),
-                order.getSubtotal(), order.getTotalPrice(), order.getStatus(), order.getPlacementDate(),
+                order.getSubtotal(), order.getTotalPrice(), order.getStatus().toString(), order.getPlacementDate(),
                 order.getId());
     }
 }
