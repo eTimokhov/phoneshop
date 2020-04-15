@@ -13,7 +13,6 @@
         <header class="clearfix">
             <h1>Phonify</h1>
             <div class="float-right">
-                <a href="#">Login</a>
                 <a href="<c:url value="/cart"/>" id="cart" class="btn btn-outline-secondary">Cart</a>
             </div>
         </header>

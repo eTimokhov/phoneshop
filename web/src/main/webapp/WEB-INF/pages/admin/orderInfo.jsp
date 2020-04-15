@@ -9,7 +9,6 @@
             <h1>Phonify</h1>
             <div class="float-right">
                 <span>admin</span>
-                <a href="#">Login</a>
             </div>
         </header>
         <hr>

@@ -11,7 +11,16 @@
         <header class="clearfix">
             <h1>Phonify</h1>
             <div class="float-right">
-                <a href="#">Login</a>
+                <c:if test="${not empty pageContext.request.userPrincipal.name}">
+                    <span>Hi ${pageContext.request.userPrincipal.name}!</span>
+                    <a href="<c:url value="/logout"/> ">Logout</a>
+                </c:if>
+                <c:if test="${empty pageContext.request.userPrincipal.name}">
+                    <a href="<c:url value="/login"/> ">Login</a>
+                </c:if>
+                <c:if test="${pageContext.request.isUserInRole('ROLE_ADMIN')}">
+                    <a href="<c:url value="/admin/orders"/> ">Admin</a>
+                </c:if>
                 <a href="<c:url value="/cart"/>" id="cart" class="btn btn-outline-secondary">Cart</a>
             </div>
         </header>
