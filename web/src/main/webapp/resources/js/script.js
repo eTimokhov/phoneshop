@@ -5,13 +5,21 @@ const errorMap = new Map([
     ["outOfStock", "Product is out of stock"]
 ]);
 
+$(function () {
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+    $(document).ajaxSend(function(e, xhr, options) {
+        xhr.setRequestHeader(header, token);
+    });
+});
+
 
 function addToCart(phoneId, quantity) {
     $.ajax(ajaxCartUrl, {
         type: 'POST',
         data: {
             phoneId: phoneId,
-            quantity: quantity
+            quantity: quantity,
         },
         success: () => {
             clearErrorMessages();

@@ -12,7 +12,6 @@
         <intercept-url pattern="/**" access="permitAll()"/>
         <form-login login-page="/login" default-target-url="/productList" authentication-failure-url="/login?loginError=true"/>
         <logout logout-success-url="/"/>
-        <csrf disabled="true"/>
     </http>
 
     <authentication-manager alias="authenticationManager">
