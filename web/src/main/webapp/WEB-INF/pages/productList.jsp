@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
 <tags:template>
@@ -11,7 +12,19 @@
         <header class="clearfix">
             <h1>Phonify</h1>
             <div class="float-right">
-                <a href="#">Login</a>
+                <sec:authorize access="isAuthenticated()">
+                    <span>Hi <sec:authentication property="principal.username" />!</span>
+                    <form action="<c:url value="/logout"/>" method="post">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <button class="btn btn-secondary">Logout</button>
+                    </form>
+                </sec:authorize>
+                <sec:authorize access="!isAuthenticated()">
+                    <a href="<c:url value="/login"/> ">Login</a>
+                </sec:authorize>
+                <sec:authorize access="hasRole('ROLE_ADMIN')">
+                    <a href="<c:url value="/admin/orders"/> ">Admin</a>
+                </sec:authorize>
                 <a href="<c:url value="/cart"/>" id="cart" class="btn btn-outline-secondary">Cart</a>
             </div>
         </header>
@@ -80,7 +93,9 @@
         </table>
         <c:choose>
             <c:when test="${paginationData.totalCount > 0}">
-                <tags:pagination activePage="${not empty param.page ? param.page : 1}" resultsPerPage="${paginationData.resultsPerPage}" totalCount="${paginationData.totalCount}"/>
+                <tags:pagination activePage="${not empty param.page ? param.page : 1}"
+                                 resultsPerPage="${paginationData.resultsPerPage}"
+                                 totalCount="${paginationData.totalCount}"/>
             </c:when>
             <c:otherwise>
                 <p>No results found.</p>

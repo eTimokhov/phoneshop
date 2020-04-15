@@ -9,7 +9,6 @@
             <h1>Phonify</h1>
             <div class="float-right">
                 <span>admin</span>
-                <a href="#">Login</a>
             </div>
         </header>
         <hr>
@@ -104,16 +103,19 @@
                     <form method="post">
                         <input type="hidden" name="orderId" value="${order.id}">
                         <input type="hidden" name="orderStatus" value="NEW">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                         <button class="btn btn-primary">New</button>
                     </form>
                     <form method="post">
                         <input type="hidden" name="orderId" value="${order.id}">
                         <input type="hidden" name="orderStatus" value="DELIVERED">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                         <button class="btn btn-primary">Delivered</button>
                     </form>
                     <form method="post">
                         <input type="hidden" name="orderId" value="${order.id}">
                         <input type="hidden" name="orderStatus" value="REJECTED">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                         <button class="btn btn-primary">Rejected</button>
                     </form>
                 </div>

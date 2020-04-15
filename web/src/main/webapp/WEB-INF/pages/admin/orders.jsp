@@ -10,9 +10,11 @@
             <h1>Phonify</h1>
             <div class="float-right">
                 <span>admin</span>
-                <a href="#">Login</a>
             </div>
         </header>
+        <div class="row">
+            <a href="<c:url value="/productList"/>" class="btn btn-outline-secondary">Back to product list</a>
+        </div>
         <div class="row">
             <h4>Orders</h4>
         </div>
