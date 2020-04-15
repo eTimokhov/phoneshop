@@ -14,7 +14,10 @@
             <div class="float-right">
                 <sec:authorize access="isAuthenticated()">
                     <span>Hi <sec:authentication property="principal.username" />!</span>
-                    <a href="<c:url value="/logout"/> ">Logout</a>
+                    <form action="<c:url value="/logout"/>" method="post">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                        <button class="btn btn-secondary">Logout</button>
+                    </form>
                 </sec:authorize>
                 <sec:authorize access="!isAuthenticated()">
                     <a href="<c:url value="/login"/> ">Login</a>
