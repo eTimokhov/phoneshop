@@ -77,6 +77,11 @@ public class HttpSessionCartService implements CartService {
         return oldItemsCount != getCart().getCartItems().size();
     }
 
+    @Override
+    public void processAddCartItemInfo(CartItemInfo cartItemInfo) throws OutOfStockException {
+        addPhone(cartItemInfo.getPhoneId(), cartItemInfo.getQuantity());
+    }
+
     private void addPhoneToCart(Long phoneId, Long quantity) throws OutOfStockException {
         if (quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be greater than 0");

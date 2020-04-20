@@ -52,7 +52,7 @@ public class QuickCartPageController {
             }
             try {
                 CartItemInfo cartItemInfo = items.get(i);
-                cartService.addPhone(cartItemInfo.getPhoneId(), cartItemInfo.getQuantity());
+                cartService.processAddCartItemInfo(cartItemInfo);
                 successMessages.add("Product " + cartItemInfo.getPhoneId() + " added successfully.");
                 cartItemInfo.setPhoneId(null);
                 cartItemInfo.setQuantity(null);

@@ -17,4 +17,6 @@ public interface CartService {
     void clearCart();
 
     boolean removeOutOfStockCartItems();
+
+    void processAddCartItemInfo(CartItemInfo cartItemInfo) throws OutOfStockException;
 }
