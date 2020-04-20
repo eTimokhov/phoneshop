@@ -26,6 +26,7 @@
                     <a href="<c:url value="/admin/orders"/> ">Admin</a>
                 </sec:authorize>
                 <a href="<c:url value="/cart"/>" id="cart" class="btn btn-outline-secondary">Cart</a>
+                <a href="<c:url value="/quickCart"/>">Quick Cart</a>
             </div>
         </header>
         <hr>
